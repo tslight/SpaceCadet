@@ -80,14 +80,12 @@ final class KeyRemapper {
         default:
             switch state {
             case .pendingTap(let downAt):
-                // Any key pressed while space is held triggers immediate control
-                cancelHoldTimer()
-                transitionToControlIfNeeded(downAt: downAt)
-                repostWithControl(from: event)
-                return nil
+                    // Any key pressed while space is held triggers immediate control
+                    cancelHoldTimer()
+                    transitionToControlIfNeeded(downAt: downAt)
+                    return eventWithControl(from: event)
             case .holdingControl:
-                repostWithControl(from: event)
-                return nil
+                    return eventWithControl(from: event)
             case .idle:
                 return event
             }
@@ -119,10 +117,7 @@ final class KeyRemapper {
             return nil
         } else {
             // While holding control via space, also repost keyUp with control to keep phases consistent
-            if case .holdingControl = state {
-                repostWithControl(from: event)
-                return nil
-            }
+                if case .holdingControl = state { return eventWithControl(from: event) }
             return event
         }
     }
@@ -147,6 +142,18 @@ final class KeyRemapper {
         newEvent.setIntegerValueField(.eventSourceUserData, value: syntheticUserDataFlag)
         newEvent.post(tap: .cghidEventTap)
     }
+        private func eventWithControl(from event: CGEvent) -> CGEvent? {
+            guard let src = CGEventSource(stateID: .hidSystemState) else { return nil }
+            let keyCode = CGKeyCode(event.getIntegerValueField(.keyboardEventKeycode))
+            let isDown = (event.type == .keyDown)
+            guard let newEvent = CGEvent(keyboardEventSource: src, virtualKey: keyCode, keyDown: isDown)
+            else { return nil }
+            var flags = event.flags
+            flags.insert(.maskControl)
+            newEvent.flags = flags
+            newEvent.setIntegerValueField(.eventSourceUserData, value: syntheticUserDataFlag)
+            return newEvent
+        }
 
     private func synthesizeKeyDownUp(keyCode: CGKeyCode) {
         guard let src = CGEventSource(stateID: .hidSystemState) else { return }

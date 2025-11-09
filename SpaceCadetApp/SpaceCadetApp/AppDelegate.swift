@@ -275,8 +275,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: - Adaptive UI Updates
     private func startAdaptiveUIUpdates() {
         adaptiveUpdateTimer?.invalidate()
-        adaptiveUpdateTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) {
-            [weak self] _ in
+        adaptiveUpdateTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { [weak self] _ in
             guard let self = self,
                 let r = self.remapper,
                 let cv = self.prefsWindow?.contentView,
