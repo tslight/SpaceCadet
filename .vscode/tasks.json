@@ -1,0 +1,32 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run SpaceCadet",
+			"type": "shell",
+			"command": "swift",
+			"args": [
+				"run",
+				"SpaceCadet"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		}
+		{
+			"label": "Run SpaceCadet (HID)",
+			"type": "shell",
+			"command": "env",
+			"args": [
+				"SPACE_CADET_ENGINE=hid",
+				"SPACE_CADET_LOG=1",
+				"swift",
+				"run",
+				"SpaceCadet"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}

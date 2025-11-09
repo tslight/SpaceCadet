@@ -1,0 +1,10 @@
+/.build
+/Packages
+/*.xcodeproj
+/.DS_Store
+/.swiftpm
+/*.swp
+/*.tmp
+/*.log
+xcuserdata/
+DerivedData/

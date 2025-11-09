@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:space-cadet}",
+            "name": "Debug SpaceCadet",
+            "target": "SpaceCadet",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug SpaceCadet"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:space-cadet}",
+            "name": "Release SpaceCadet",
+            "target": "SpaceCadet",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release SpaceCadet"
+        }
+    ]
+}

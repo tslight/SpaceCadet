@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Copy this file to ~/Library/LaunchAgents/com.apple.space-cadet.plist -->
+    <key>Label</key>
+    <string>com.apple.space-cadet</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>${HOME}/space-cadet/.build/release/SpaceCadet</string>
+    </array>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>SPACE_CADET_HOLD_MS</key>
+        <string>140</string>
+    </dict>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+</dict>
+</plist>
