@@ -32,15 +32,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         let menu = NSMenu()
         menu.addItem(withTitle: "Enabled", action: #selector(toggleEnabled), keyEquivalent: "")
-    menu.addItem(withTitle: "Preferences…", action: #selector(openPreferences), keyEquivalent: ",")
+        menu.addItem(
+            withTitle: "Preferences…", action: #selector(openPreferences), keyEquivalent: ",")
         menu.addItem(NSMenuItem.separator())
-    menu.addItem(withTitle: "Restart Event Tap", action: #selector(restartTapAction), keyEquivalent: "r")
-    menu.addItem(withTitle: "Toggle Logging", action: #selector(toggleLogging), keyEquivalent: "l")
-    menu.addItem(withTitle: "Suggest Threshold", action: #selector(suggestThreshold), keyEquivalent: "s")
-    menu.addItem(NSMenuItem.separator())
-    menu.addItem(withTitle: currentThresholdMenuTitle(), action: nil, keyEquivalent: "")
-    menu.items.last?.isEnabled = false
-    menu.addItem(NSMenuItem.separator())
+        menu.addItem(
+            withTitle: "Restart Event Tap", action: #selector(restartTapAction), keyEquivalent: "r")
+        menu.addItem(
+            withTitle: "Toggle Logging", action: #selector(toggleLogging), keyEquivalent: "l")
+        menu.addItem(
+            withTitle: "Suggest Threshold", action: #selector(suggestThreshold), keyEquivalent: "s")
+        menu.addItem(NSMenuItem.separator())
+        menu.addItem(withTitle: currentThresholdMenuTitle(), action: nil, keyEquivalent: "")
+        menu.items.last?.isEnabled = false
+        menu.addItem(NSMenuItem.separator())
         menu.addItem(withTitle: "Open README", action: #selector(openReadme), keyEquivalent: "")
         menu.addItem(NSMenuItem.separator())
         menu.addItem(withTitle: "Quit SpaceCadet", action: #selector(quit), keyEquivalent: "q")
@@ -56,25 +60,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc private func openPreferences() {
-        if let w = prefsWindow { w.makeKeyAndOrderFront(nil); NSApp.activate(ignoringOtherApps: true); return }
+        if let w = prefsWindow {
+            w.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+            return
+        }
         let current = UserDefaults.standard.double(forKey: thresholdKey)
         let initial = current > 0 ? current : defaultHoldMs
-        let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 340, height: 160),
-                              styleMask: [.titled, .closable, .miniaturizable],
-                              backing: .buffered, defer: false)
+        let window = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 340, height: 160),
+            styleMask: [.titled, .closable, .miniaturizable],
+            backing: .buffered, defer: false)
         window.center()
         window.title = "SpaceCadet Preferences"
         let content = NSView(frame: window.contentView!.bounds)
         content.autoresizingMask = [.width, .height]
 
-        let slider = NSSlider(value: initial, minValue: 150, maxValue: 800, target: nil, action: nil)
+        let slider = NSSlider(
+            value: initial, minValue: 150, maxValue: 800, target: nil, action: nil)
         slider.frame = NSRect(x: 20, y: 70, width: 300, height: 24)
         slider.isContinuous = true
 
         let label = NSTextField(labelWithString: "Hold Threshold: \(Int(initial)) ms")
         label.frame = NSRect(x: 20, y: 110, width: 300, height: 20)
 
-    let adaptiveLabel = NSTextField(labelWithString: "Adaptive avg: collecting…")
+        let adaptiveLabel = NSTextField(labelWithString: "Adaptive avg: collecting…")
         adaptiveLabel.frame = NSRect(x: 20, y: 40, width: 300, height: 18)
         adaptiveLabel.textColor = .secondaryLabelColor
 
@@ -96,11 +106,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.activate(ignoringOtherApps: true)
 
         // Associate objects for later retrieval
-    window.contentView?.setValue(slider, forKey: "slider")
-    window.contentView?.setValue(label, forKey: "label")
-    window.contentView?.setValue(adaptiveLabel, forKey: "adaptiveLabel")
-    window.delegate = self
-    startAdaptiveUIUpdates()
+        window.contentView?.setValue(slider, forKey: "slider")
+        window.contentView?.setValue(label, forKey: "label")
+        window.contentView?.setValue(adaptiveLabel, forKey: "adaptiveLabel")
+        window.delegate = self
+        startAdaptiveUIUpdates()
     }
 
     @objc private func sliderChanged(_ sender: NSSlider) {
@@ -110,7 +120,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc private func savePreferences(_ sender: NSButton) {
-        guard let slider = prefsWindow?.contentView?.value(forKey: "slider") as? NSSlider else { return }
+        guard let slider = prefsWindow?.contentView?.value(forKey: "slider") as? NSSlider else {
+            return
+        }
         let value = slider.doubleValue
         UserDefaults.standard.set(value, forKey: thresholdKey)
         restartRemapper(with: value)
@@ -215,18 +227,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
         let avgMs = r.adaptiveAvgTap * 1000
-        let suggested = min(max(Int(avgMs + 35), 150), 800) // avg + buffer
-        fputs("[SpaceCadetApp] suggested threshold ≈ \(suggested) ms (avg=\(Int(avgMs)) ms)\n", stderr)
+        let suggested = min(max(Int(avgMs + 35), 150), 800)  // avg + buffer
+        fputs(
+            "[SpaceCadetApp] suggested threshold ≈ \(suggested) ms (avg=\(Int(avgMs)) ms)\n", stderr
+        )
     }
 
     // MARK: - Adaptive UI Updates
     private func startAdaptiveUIUpdates() {
         adaptiveUpdateTimer?.invalidate()
-        adaptiveUpdateTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { [weak self] _ in
+        adaptiveUpdateTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) {
+            [weak self] _ in
             guard let self = self,
-                  let r = self.remapper,
-                  let cv = self.prefsWindow?.contentView,
-                  let label = cv.value(forKey: "adaptiveLabel") as? NSTextField else { return }
+                let r = self.remapper,
+                let cv = self.prefsWindow?.contentView,
+                let label = cv.value(forKey: "adaptiveLabel") as? NSTextField
+            else { return }
             if r.adaptiveCount > 0 {
                 let ms = Int(r.adaptiveAvgTap * 1000)
                 label.stringValue = "Adaptive avg: ~\(ms) ms (samples=\(r.adaptiveCount))"
