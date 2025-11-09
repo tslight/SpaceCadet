@@ -1,6 +1,6 @@
 # Space Cadet ⌨️ 🚀
 
-[![CI](https://github.com/tslight/SpaceCadet/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/tslight/SpaceCadet/actions/workflows/ci.yml)
+[![CI](https://github.com/tslight/SpaceCadet/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/tslight/SpaceCadet/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/tag/tslight/SpaceCadet?label=release)](https://github.com/tslight/SpaceCadet/releases)
 [![Downloads](https://img.shields.io/github/downloads/tslight/SpaceCadet/total)](https://github.com/tslight/SpaceCadet/releases)
 [![License](https://img.shields.io/github/license/tslight/SpaceCadet)](LICENSE)
