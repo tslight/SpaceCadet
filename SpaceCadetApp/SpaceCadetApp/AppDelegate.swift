@@ -13,6 +13,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var prefsWindow: NSWindow?
     private var loggingEnabled: Bool = true
     private var adaptiveUpdateTimer: Timer?
+    private let launchAtLoginKey = "SpaceCadetLaunchAtLogin"
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         setupStatusBar()
@@ -51,6 +52,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             withTitle: "Toggle Logging", action: #selector(toggleLogging), keyEquivalent: "")
         menu.addItem(
             withTitle: "Suggest Threshold", action: #selector(suggestThreshold), keyEquivalent: "")
+        menu.addItem(
+            withTitle: "Launch at Login", action: #selector(toggleLaunchAtLogin), keyEquivalent: "")
         menu.addItem(NSMenuItem.separator())
         menu.addItem(withTitle: currentThresholdMenuTitle(), action: nil, keyEquivalent: "")
         menu.items.last?.isEnabled = false
@@ -59,6 +62,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(NSMenuItem.separator())
         menu.addItem(withTitle: "Quit Space Cadet", action: #selector(quit), keyEquivalent: "")
         menu.items.first?.state = .on
+        // Reflect launch-at-login state (from manager; fallback to persisted preference)
+        if let launchItem = menu.items.first(where: { $0.title == "Launch at Login" }) {
+            let persisted = UserDefaults.standard.bool(forKey: launchAtLoginKey)
+            let installed = LaunchAtLoginManager.isInstalled()
+            let enabled = installed || persisted
+            launchItem.state = enabled ? .on : .off
+        }
         self.menu = menu
         statusItem.menu = menu
     }
@@ -147,6 +157,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @objc private func openReadme() {
         if let url = URL(string: "https://github.com/tslight/SpaceCadet#readme") {
             NSWorkspace.shared.open(url)
+        }
+    }
+
+    // MARK: - Launch at Login
+    @objc private func toggleLaunchAtLogin() {
+        guard let item = menu.items.first(where: { $0.title == "Launch at Login" }) else { return }
+        let newState = item.state == .off
+        item.state = newState ? .on : .off
+        UserDefaults.standard.set(newState, forKey: launchAtLoginKey)
+        do {
+            try LaunchAtLoginManager.set(
+                enabled: newState,
+                executablePath: Bundle.main.executablePath
+            )
+            fputs("[SpaceCadetApp] launch-at-login \(newState ? "enabled" : "disabled")\n", stderr)
+        } catch {
+            fputs("[SpaceCadetApp] launch-at-login error: \(error)\n", stderr)
         }
     }
 

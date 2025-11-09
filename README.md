@@ -38,6 +38,7 @@ Absolutely. However, I wanted a much more simple app that only did this one thin
 * Single configurable knob: `SPACE_CADET_HOLD_MS` (default 700 ms).
 * Adaptive tap timing logs help you choose a personal threshold (see stderr output).
 * Status bar app with Preferences (slider) and Toggle Logging.
+* Launch at Login toggle in the menu.
 * LaunchAgent template for auto-start on login.
 
 ## Install
@@ -56,6 +57,7 @@ To build the background status bar app in Xcode:
 3. A status bar item (keyboard icon on macOS 11+, or ⌃␣ on older macOS) will appear. Menu items include:
 	- Enabled/Disabled
 	- Preferences… (hold threshold slider; applied immediately)
+	- Launch at Login (toggle)
 	- Restart Event Tap
 	- Toggle Logging (enable/disable verbose logs)
 	- Suggest Threshold (based on adaptive average)
@@ -128,7 +130,7 @@ SPACE_CADET_HOLD_MS=900 swift run SpaceCadet   # slower
 
 ### CLI LaunchAgent (optional)
 
-Edit the plist template at `scripts/com.apple.space-cadet.plist` if needed, then:
+For the CLI-only binary you can still use a LaunchAgent. Edit the template at `scripts/com.apple.space-cadet.plist` if needed, then:
 
 ```zsh
 make release
