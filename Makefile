@@ -7,7 +7,7 @@ BIN=.build/release/$(APP)
 XCODE_APP=/Applications/Xcode.app/Contents/Developer
 STRICT?=0
 
-.PHONY: build release run test install-agent unload-agent lint lint-strict
+.PHONY: build release run test install-agent unload-agent lint lint-strict lint-fix app-build
 
 lint:
 	@command -v swiftlint >/dev/null 2>&1 || { echo "SwiftLint not installed. Install with: brew install swiftlint"; exit 1; }
@@ -31,6 +31,20 @@ lint-analyze:
 	else \
 		swiftlint analyze --compiler-log-path swiftlint.log || true; \
 	fi
+.PHONY: lint-fix
+lint-fix:
+	@command -v swiftlint >/dev/null 2>&1 || { echo "SwiftLint not installed. Install with: brew install swiftlint"; exit 1; }
+	@if [ -d "$(XCODE_APP)" ]; then \
+		DEVELOPER_DIR=$(XCODE_APP) swiftlint --fix; \
+	else \
+		swiftlint --fix; \
+	fi
+
+.PHONY: app-build
+app-build:
+	@echo "Building SpaceCadetApp (Xcode Release)"
+	xcodebuild -project SpaceCadetApp/SpaceCadetApp.xcodeproj -scheme SpaceCadetApp -configuration Release -derivedDataPath build-app | xcpretty || true
+	@echo "App build artifacts at build-app/Build/Products/Release/Space Cadet.app"
 
 .PHONY: icons
 icons:

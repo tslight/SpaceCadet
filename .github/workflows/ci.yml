@@ -35,3 +35,6 @@ jobs:
         run: swift build -v
       - name: Test
         run: swift test -v || true # tests are currently minimal
+      - name: Build SpaceCadetApp (Xcode Release)
+        run: |
+          xcodebuild -project SpaceCadetApp/SpaceCadetApp.xcodeproj -scheme SpaceCadetApp -configuration Release -derivedDataPath build-app
