@@ -8,7 +8,7 @@
 [![Swift](https://img.shields.io/badge/Swift-6.1-orange)](#)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](https://github.com/tslight/SpaceCadet/pulls)
 
-Take **CTRL** of your **SPC**
+Take **CTRL** of your **SPC**!
 
 * Press and release space alone inserts a normal space.
 * Hold space alone beyond the threshold (default 700 ms) turns it into Control.
@@ -25,6 +25,8 @@ Modifiers were symmetrical and the most used Control modifier was accessible wit
 On the modern Macbook keyboard we only have one Control key and it's a pinky job - ie) far from ideal for ergonomics.
 
 Space Cadet recifies this horrible, RSI inducing experience and means that the Control key is given pride of place and can be pressed symmetrically with the thumbs whilst touch typing 😊.
+
+This is especially useful on macOS given that readline/Emacs style bindings work all over the shop.
 
 *Couldn't I just do this with Karabiner?*
 
