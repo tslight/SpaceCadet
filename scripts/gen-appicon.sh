@@ -70,7 +70,7 @@ if [[ "$SRC" == *.svg ]]; then
   if command -v rsvg-convert >/dev/null 2>&1; then
     rsvg-convert -w 1024 -h 1024 "$SRC" -o /tmp/icon-1024.png
   elif command -v convert >/dev/null 2>&1; then
-    convert -background none -density 512 "$SRC" -resize 1024x1024 /tmp/icon-1024.png
+    convert -background none -density 512 "$SRC" -resize 1024x1024 -type TrueColorAlpha /tmp/icon-1024.png
   else
     echo "Please install librsvg (rsvg-convert) or ImageMagick (convert) to rasterize SVG." >&2
     exit 1
@@ -84,7 +84,7 @@ for size in "${SIZES[@]}"; do
   OUT="$APPICON_DIR/AppIcon-$size.png"
   # Prefer ImageMagick if present for better scaling
   if command -v convert >/dev/null 2>&1; then
-    convert "$SRC" -resize ${size}x${size} "$OUT"
+    convert "$SRC" -resize ${size}x${size} -type TrueColorAlpha "$OUT"
   else
     sips -z $size $size "$SRC" --out "$OUT" >/dev/null
   fi
