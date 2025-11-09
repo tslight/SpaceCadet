@@ -1,0 +1,6 @@
+{
+  "[swift]": {
+    "editor.formatOnSave": false,
+    "editor.formatOnPaste": false
+  }
+}

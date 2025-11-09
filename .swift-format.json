@@ -1,7 +1,7 @@
 {
     "version": 1,
     "indentation": {
-        "spaces": 4,
+        "spaces": 2,
         "tabs": false
     },
     "lineLength": 120,
