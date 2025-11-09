@@ -1,7 +1,7 @@
 // Compile-time opt-in. This file is experimental and disabled by default.
-#if HID_ENGINE_EXPERIMENTAL
-    import Foundation
-    import IOKit.hid
+ #if HID_ENGINE_EXPERIMENTAL
+import Foundation
+import IOKit.hid
 
     // Forward declarations for IOHIDUserDevice (not exposed in Swift automatically)
     @_silgen_name("IOHIDUserDeviceCreate")
@@ -13,7 +13,7 @@
     ) -> IOReturn
 
     // MARK: - IOHID-based SpaceCadet
-    final class HIDEngine {
+final class HIDEngine {
         private var manager: IOHIDManager!
         private var virtualDevice: IOHIDUserDevice?
         private let holdThreshold: TimeInterval
@@ -37,43 +37,40 @@
         private let usageSpace: UInt8 = 0x2C
         private let modLeftCtrlBit: UInt8 = 0x01  // bit0
 
-        init(holdThresholdMs: Double) {
-            self.holdThreshold = holdThresholdMs / 1000.0
-        }
+    init(holdThresholdMs: Double) {
+        self.holdThreshold = holdThresholdMs / 1000.0
+    }
 
-        func start() throws {
-            setupManager()
-            try createVirtualKeyboard()
-            IOHIDManagerScheduleWithRunLoop(
-                manager, CFRunLoopGetCurrent(), CFRunLoopMode.commonModes.rawValue)
-            let openRes = IOHIDManagerOpen(manager, IOOptionBits(kIOHIDOptionsTypeNone))
-            if openRes != kIOReturnSuccess { throw err("IOHIDManagerOpen failed", code: openRes) }
-            log("HID engine ready.")
-        }
+    func start() throws {
+        setupManager()
+        try createVirtualKeyboard()
+        IOHIDManagerScheduleWithRunLoop(manager, CFRunLoopGetCurrent(), CFRunLoopMode.commonModes.rawValue)
+        let openRes = IOHIDManagerOpen(manager, IOOptionBits(kIOHIDOptionsTypeNone))
+        if openRes != kIOReturnSuccess { throw err("IOHIDManagerOpen failed", code: openRes) }
+        log("HID engine ready.")
+    }
 
-        private func setupManager() {
-            manager = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
-            let match: [String: Any] = [
-                kIOHIDDeviceUsagePageKey as String: kHIDPage_GenericDesktop,
-                kIOHIDDeviceUsageKey as String: kHIDUsage_GD_Keyboard
-            ]
-            IOHIDManagerSetDeviceMatching(manager, match as CFDictionary)
+    private func setupManager() {
+        manager = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
+        let match: [String: Any] = [
+            kIOHIDDeviceUsagePageKey as String: kHIDPage_GenericDesktop,
+            kIOHIDDeviceUsageKey as String: kHIDUsage_GD_Keyboard
+        ]
+        IOHIDManagerSetDeviceMatching(manager, match as CFDictionary)
 
-            IOHIDManagerRegisterDeviceMatchingCallback(
-                manager, { ctx, result, _, device in
-                    guard result == kIOReturnSuccess, let ctx = ctx else { return }
-                    let this = Unmanaged<HIDEngine>.fromOpaque(ctx).takeUnretainedValue()
-                    IOHIDDeviceOpen(device, IOOptionBits(kIOHIDOptionsTypeSeizeDevice))
-                    this.log("Seized device")
-                }, UnsafeMutableRawPointer(Unmanaged.passUnretained(self).toOpaque()))
+        IOHIDManagerRegisterDeviceMatchingCallback(manager, { ctx, result, _, device in
+            guard result == kIOReturnSuccess, let ctx = ctx else { return }
+            let this = Unmanaged<HIDEngine>.fromOpaque(ctx).takeUnretainedValue()
+            IOHIDDeviceOpen(device, IOOptionBits(kIOHIDOptionsTypeSeizeDevice))
+            this.log("Seized device")
+        }, UnsafeMutableRawPointer(Unmanaged.passUnretained(self).toOpaque()))
 
-            IOHIDManagerRegisterInputValueCallback(
-                manager, { ctx, result, _, value in
-                    guard result == kIOReturnSuccess, let ctx = ctx else { return }
-                    let this = Unmanaged<HIDEngine>.fromOpaque(ctx).takeUnretainedValue()
-                    this.handle(value: value)
-                }, UnsafeMutableRawPointer(Unmanaged.passUnretained(self).toOpaque()))
-        }
+        IOHIDManagerRegisterInputValueCallback(manager, { ctx, result, _, value in
+            guard result == kIOReturnSuccess, let ctx = ctx else { return }
+            let this = Unmanaged<HIDEngine>.fromOpaque(ctx).takeUnretainedValue()
+            this.handle(value: value)
+        }, UnsafeMutableRawPointer(Unmanaged.passUnretained(self).toOpaque()))
+    }
 
         private func createVirtualKeyboard() throws {
             let descriptor: [UInt8] = [
