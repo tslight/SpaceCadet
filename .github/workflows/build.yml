@@ -21,9 +21,12 @@ jobs:
           SWIFTLINT_VERSION: 0.62.2
         run: |
           set -e
+          mkdir -p swiftlint-bin
           curl -sSL -o swiftlint.zip "https://github.com/realm/SwiftLint/releases/download/${SWIFTLINT_VERSION}/portable_swiftlint.zip"
           unzip -q swiftlint.zip -d swiftlint-bin
+          chmod +x swiftlint-bin/swiftlint
           echo "${{ github.workspace }}/swiftlint-bin" >> $GITHUB_PATH
+          export PATH="${{ github.workspace }}/swiftlint-bin:$PATH"
           swiftlint --version
           swift --version
           xcodebuild -version
@@ -36,6 +39,7 @@ jobs:
           DEVELOPER_DIR: /Applications/Xcode.app/Contents/Developer
         run: |
           set -e
+          export PATH="${{ github.workspace }}/swiftlint-bin:$PATH"
           # Generate compiler log for analyze; use swift build for spm target
           swift build -v 2> swiftlint.log || true
           swiftlint analyze --compiler-log-path swiftlint.log || true
