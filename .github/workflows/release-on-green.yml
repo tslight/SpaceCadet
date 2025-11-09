@@ -45,3 +45,6 @@ jobs:
                   sha=${{ github.event.workflow_run.head_sha }}
                   git tag -a "$TAG" -m "Release $TAG (auto tag on green)" "$sha"
                   git push origin "$TAG"
+                    - name: Record tool versions
+                        run: |
+                            echo "SwiftLint pinned to 0.62.2 (CI workflows)." >> $GITHUB_STEP_SUMMARY

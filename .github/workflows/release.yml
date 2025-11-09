@@ -26,13 +26,15 @@ jobs:
 
             - name: Install SwiftLint (pinned)
               env:
-                  SWIFTLINT_VERSION: 0.54.0
+                  SWIFTLINT_VERSION: 0.62.2
               run: |
                   set -e
                   curl -sSL -o swiftlint.zip "https://github.com/realm/SwiftLint/releases/download/${SWIFTLINT_VERSION}/portable_swiftlint.zip"
                   unzip -q swiftlint.zip -d swiftlint-bin
                   echo "${{ github.workspace }}/swiftlint-bin" >> $GITHUB_PATH
                   swiftlint --version
+                  swift --version
+                  xcodebuild -version
 
             - name: Lint (Makefile)
               env:
