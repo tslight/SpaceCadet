@@ -18,7 +18,7 @@ Inspired by years of Emacs usage & the "Space Cadet" keyboard that the Lisp mach
 
 On that keyboard the modifier layout looked like this:
 
-`SUPER > META > CTRL > SPACE < CTRL < META < SUPER`
+`SUPER/WIN/CMD > META/ALT/OPT > CTRL >  S P A C E  < CTRL < META/ALT/OPT < SUPER/WIN/CMD`
 
 So modifiers were symmetrical and the most used Control modifier was accessible with the thumbs. On the modern Macbook keyboard we only have one Control key and it's a pinky job - ie) far from ideal for ergonomics. Space Cadet recifies this horrible experience and means that the Control key is given pride of place and can be pressed symmetrically with the thumbs whilst touch typing.
 
@@ -30,21 +30,12 @@ So modifiers were symmetrical and the most used Control modifier was accessible 
 * Status bar app with Preferences (slider) and Toggle Logging.
 * LaunchAgent template for auto-start on login.
 
-## Build & Run
+## Install
 
-```zsh
-swift build
-swift run SpaceCadet
-```
-
-Or release build:
-
-```zsh
-swift build -c release
-./.build/release/SpaceCadet
-```
-
-Grant Accessibility permission when prompted (System Settings > Privacy & Security > Accessibility). If the prompt does not appear, manually add the built binary.
+1. Download the latest DMG from the Releases page: `Space-Cadet-macOS.dmg`.
+2. Open the DMG and drag “Space Cadet.app” to Applications.
+3. Launch the app from Applications. When prompted, grant Accessibility permission (System Settings > Privacy & Security > Accessibility). If you don’t see the prompt, add the app manually.
+4. Adjust your hold threshold in Preferences. You can toggle logging and use “Suggest Threshold” to approximate a good value.
 
 ### macOS App (Status Bar)
 
@@ -73,55 +64,59 @@ Notes:
 
 ## Releases
 
-Prebuilt binaries are attached to GitHub Releases when tags like `v0.1.0` are pushed:
+Prebuilt artifacts are attached to GitHub Releases (when tags like `v0.1.0` are pushed):
 
-- `SpaceCadet-cli-macos.tar.gz` — the CLI binary (SwiftPM release build)
-- `SpaceCadetApp-macos.zip` — the status bar app bundle (`Space Cadet.app`)
-- `.sha256` checksum files for both
+- `Space-Cadet-macOS.dmg` — drag-and-drop installer (recommended)
+- `SpaceCadetApp-macos.zip` — zipped app bundle (optional)
+- `.sha256` checksum files
 
 Verify and install:
 
 ```zsh
-# Verify checksums (optional but recommended)
-shasum -a 256 -c SpaceCadet-cli-macos.tar.gz.sha256
+# Verify checksums (optional)
+shasum -a 256 -c Space-Cadet-macOS.dmg.sha256
 shasum -a 256 -c SpaceCadetApp-macos.zip.sha256
 
-# CLI
-tar -xzf SpaceCadet-cli-macos.tar.gz
-./SpaceCadet  # grant Accessibility on first run
+# Install from DMG (recommended)
+open Space-Cadet-macOS.dmg  # then drag Space Cadet.app to Applications
 
-# App
+# Alternatively, install from ZIP
 unzip SpaceCadetApp-macos.zip -d /Applications
-# If Gatekeeper flags it as unsigned, right-click the app → Open → Open.
+# If Gatekeeper warns, right-click the app → Open → Open.
 ```
 
 ## Threshold Tuning
 
-Run with default (700 ms):
-
-```zsh
-swift run SpaceCadet
-```
-
-Try a faster threshold (e.g. 300 ms):
-
-```zsh
-SPACE_CADET_HOLD_MS=300 swift run SpaceCadet
-```
-
-Or slower (e.g. 900 ms):
-
-```zsh
-SPACE_CADET_HOLD_MS=700 swift run SpaceCadet
-```
-
-Guidance:
+Use Preferences in the app to set your hold threshold (default 700 ms). Guidance:
 
 * Look at "adaptive avg tap" logs; pick a threshold ~20–40 ms above that number.
 * Lower threshold: space-alone becomes Control sooner.
 * Higher threshold: more time to tap a space before it could become Control.
 
-## LaunchAgent Installation
+## Development
+
+CLI build & run (for development/testing):
+
+```zsh
+swift build
+swift run SpaceCadet
+```
+
+Release build:
+
+```zsh
+swift build -c release
+./.build/release/SpaceCadet
+```
+
+Adjust threshold when running CLI via env var:
+
+```zsh
+SPACE_CADET_HOLD_MS=300 swift run SpaceCadet   # faster
+SPACE_CADET_HOLD_MS=900 swift run SpaceCadet   # slower
+```
+
+### CLI LaunchAgent (optional)
 
 Edit the plist template at `scripts/com.apple.space-cadet.plist` if needed, then:
 
@@ -154,12 +149,7 @@ An asset catalog stub (`AppIcon.appiconset`) is included. To generate placeholde
 
 ```zsh
 ./scripts/gen-appicon.sh path/to/source-1024.png
-# or
-./scripts/gen-appicon.sh --symbol keyboard.badge.ellipsis
-```
-
-Images are written into `SpaceCadetApp/SpaceCadetApp/Assets.xcassets/AppIcon.appiconset`. Replace them with your final artwork as desired.
-
+## Tests
 
 Run unit tests:
 
@@ -167,6 +157,14 @@ Run unit tests:
 swift test
 ```
 
-## License
+## App Icon
 
-MIT — see `LICENSE`.
+An asset catalog stub (`AppIcon.appiconset`) is included. To generate placeholder icons from an image or SF Symbol:
+
+```zsh
+./scripts/gen-appicon.sh path/to/source-1024.png
+# or
+./scripts/gen-appicon.sh --symbol keyboard.badge.ellipsis
+```
+
+Images are written into `SpaceCadetApp/SpaceCadetApp/Assets.xcassets/AppIcon.appiconset`. Replace them with your final artwork as desired.

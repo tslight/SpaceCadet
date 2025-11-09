@@ -10,16 +10,18 @@
    - Implemented CGEventTap and remapping logic; added tests, README, Makefile, LaunchAgent template.
 
  - [ ] Install Required Extensions
-   - Pending: check project setup info for any required extensions.
+   - Recommend: "Swift for Visual Studio Code" (kiadstudios.vscode-swift) and "SwiftLint" (vknabel.vscode-swiftlint) for linting and language features.
+  - [x] Add Linting
+    - Added SwiftLint config (.swiftlint.yml), Makefile lint target, and CI/Release workflow lint steps.
 
- - [ ] Compile the Project
-   - Pending: run swift build/test and resolve issues if any.
+ - [x] Compile the Project
+   - Ran swift build/test; build succeeded; tests discovered/run (no failures).
 
- - [ ] Create and Run Task
-   - Pending: add VS Code task to run SpaceCadet.
+ - [x] Create and Run Task
+   - Added VS Code tasks to run SpaceCadet (normal and HID engines). Verified they execute.
 
  - [ ] Launch the Project
    - Will launch when user confirms (Accessibility permission required).
 
- - [ ] Ensure Documentation is Complete
-   - Final pass after build and tasks; remove any remaining placeholders.
+ - [x] Ensure Documentation is Complete
+   - Updated README to DMG-first install, moved CLI usage to Development, clarified releases and threshold tuning.

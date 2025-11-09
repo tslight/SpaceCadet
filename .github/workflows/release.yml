@@ -19,6 +19,15 @@ jobs:
               run: |
                   xcodebuild -version
 
+            - name: Install SwiftLint
+              run: |
+                  brew install swiftlint
+
+            - name: Lint
+              env:
+                  DEVELOPER_DIR: /Applications/Xcode.app/Contents/Developer
+              run: swiftlint --quiet
+
             - name: Build (App only)
               run: |
                   xcodebuild -version

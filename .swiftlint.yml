@@ -1,0 +1,22 @@
+disabled_rules:
+  - line_length
+  - trailing_whitespace
+  - identifier_name
+  - nesting
+  - cyclomatic_complexity
+  - todo
+
+opt_in_rules:
+  - implicit_return
+  - explicit_init
+  - redundant_nil_coalescing
+  - fatal_error_message
+
+included:
+  - Sources
+  - SpaceCadetApp
+excluded:
+  - .build
+  - build
+  - DerivedData
+  - SpaceCadetApp/SpaceCadetApp.xcodeproj

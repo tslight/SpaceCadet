@@ -16,6 +16,13 @@ jobs:
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: latest-stable
+      - name: Install SwiftLint
+        run: |
+          brew install swiftlint
+      - name: Lint
+        env:
+          DEVELOPER_DIR: /Applications/Xcode.app/Contents/Developer
+        run: swiftlint --quiet
       - name: Build
         run: swift build -v
       - name: Test
