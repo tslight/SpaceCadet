@@ -11,6 +11,7 @@
 	A1B2C3D60E5F001100000003 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D60E5F001000000003 /* main.swift */; };
 	A1B2C3D90E5F001200000006 /* EventTap.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D90E5F001000000006 /* EventTap.swift */; };
 	A1B2C3DA0E5F001200000007 /* KeyRemapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3DA0E5F001000000007 /* KeyRemapper.swift */; };
+	BEEF00010E5F100000000001 /* LaunchAtLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEEF00000E5F100000000001 /* LaunchAtLogin.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +23,7 @@
 	A1B2C3D80E5F001000000005 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 	A1B2C3D90E5F001000000006 /* EventTap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EventTap.swift; path = ../../Sources/SpaceCadet/EventTap.swift; sourceTree = "<group>"; };
 	A1B2C3DA0E5F001000000007 /* KeyRemapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = KeyRemapper.swift; path = ../../Sources/SpaceCadet/KeyRemapper.swift; sourceTree = "<group>"; };
+	BEEF00000E5F100000000001 /* LaunchAtLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLogin.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,6 +39,7 @@
 	A1B2C3D20E5F001000000000 /* SpaceCadetApp */ = {isa = PBXGroup; children = (
             A1B2C3D40E5F001000000001 /* AppDelegate.swift */,
             A1B2C3D50E5F001000000002 /* StatusBarController.swift */,
+			BEEF00000E5F100000000001 /* LaunchAtLogin.swift */,
             A1B2C3D60E5F001000000003 /* main.swift */,
             A1B2C3D70E5F001000000004 /* Info.plist */,
             A1B2C3D80E5F001000000005 /* Assets.xcassets */,
@@ -60,6 +63,8 @@
 
 /* Begin PBXSourcesBuildPhase section */
 	A1B2C3C80E5F000E00000001 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = ( A1B2C3D40E5F001100000001 /* AppDelegate.swift in Sources */, A1B2C3D50E5F001100000002 /* StatusBarController.swift in Sources */, A1B2C3D60E5F001100000003 /* main.swift in Sources */, A1B2C3D90E5F001200000006 /* EventTap.swift in Sources */, A1B2C3DA0E5F001200000007 /* KeyRemapper.swift in Sources */ ); runOnlyForDeploymentPostprocessing = 0; };
+	/* Add LaunchAtLogin.swift to Sources */
+	A1B2C3C80E5F000E00000001 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = ( A1B2C3D40E5F001100000001 /* AppDelegate.swift in Sources */, A1B2C3D50E5F001100000002 /* StatusBarController.swift in Sources */, A1B2C3D60E5F001100000003 /* main.swift in Sources */, A1B2C3D90E5F001200000006 /* EventTap.swift in Sources */, A1B2C3DA0E5F001200000007 /* KeyRemapper.swift in Sources */, BEEF00010E5F100000000001 /* LaunchAtLogin.swift in Sources */ ); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
