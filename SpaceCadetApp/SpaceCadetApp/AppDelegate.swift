@@ -8,7 +8,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var tap: EventTap?
     private var remapper: KeyRemapper?
     private var enabled: Bool = true
-    private let defaultHoldMs: Double = 600.0
+    private let defaultHoldMs: Double = 700.0
     private let thresholdKey = "SpaceCadetHoldMs"
     private var prefsWindow: NSWindow?
     private var loggingEnabled: Bool = true
@@ -43,21 +43,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let menu = NSMenu()
         menu.addItem(withTitle: "Enabled", action: #selector(toggleEnabled), keyEquivalent: "")
         menu.addItem(
-            withTitle: "Preferences…", action: #selector(openPreferences), keyEquivalent: ",")
+            withTitle: "Preferences…", action: #selector(openPreferences), keyEquivalent: "")
         menu.addItem(NSMenuItem.separator())
         menu.addItem(
-            withTitle: "Restart Event Tap", action: #selector(restartTapAction), keyEquivalent: "r")
+            withTitle: "Restart Event Tap", action: #selector(restartTapAction), keyEquivalent: "")
         menu.addItem(
-            withTitle: "Toggle Logging", action: #selector(toggleLogging), keyEquivalent: "l")
+            withTitle: "Toggle Logging", action: #selector(toggleLogging), keyEquivalent: "")
         menu.addItem(
-            withTitle: "Suggest Threshold", action: #selector(suggestThreshold), keyEquivalent: "s")
+            withTitle: "Suggest Threshold", action: #selector(suggestThreshold), keyEquivalent: "")
         menu.addItem(NSMenuItem.separator())
         menu.addItem(withTitle: currentThresholdMenuTitle(), action: nil, keyEquivalent: "")
         menu.items.last?.isEnabled = false
         menu.addItem(NSMenuItem.separator())
         menu.addItem(withTitle: "Open README", action: #selector(openReadme), keyEquivalent: "")
         menu.addItem(NSMenuItem.separator())
-        menu.addItem(withTitle: "Quit Space Cadet", action: #selector(quit), keyEquivalent: "q")
+        menu.addItem(withTitle: "Quit Space Cadet", action: #selector(quit), keyEquivalent: "")
         menu.items.first?.state = .on
         self.menu = menu
         statusItem.menu = menu
@@ -70,8 +70,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc private func openPreferences() {
-        if let w = prefsWindow {
-            w.makeKeyAndOrderFront(nil)
+        // Reuse if still valid; recreate if released or off-screen
+        if let w = prefsWindow, w.isReleasedWhenClosed == false {
+            if !w.isVisible { w.makeKeyAndOrderFront(nil) }
+            // If window drifted off-screen (multi-display change), recenter
+            if NSScreen.screens.first(where: { $0.visibleFrame.intersects(w.frame) }) == nil {
+                w.center()
+            }
             NSApp.activate(ignoringOtherApps: true)
             return
         }
@@ -111,6 +116,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         content.addSubview(adaptiveLabel)
         content.addSubview(saveButton)
         window.contentView = content
+        window.isReleasedWhenClosed = false
         window.makeKeyAndOrderFront(nil)
         prefsWindow = window
         NSApp.activate(ignoringOtherApps: true)
@@ -268,7 +274,10 @@ extension AppDelegate: NSWindowDelegate {
         adaptiveUpdateTimer?.invalidate()
         adaptiveUpdateTimer = nil
         if let window = notification.object as? NSWindow, window == prefsWindow {
-            prefsWindow = nil
+            // Keep reference only if releasedWhenClosed is false; set to nil if it's gone
+            if window.isReleasedWhenClosed {
+                prefsWindow = nil
+            }
         }
     }
 }

@@ -1,17 +1,31 @@
-# space-cadet
+# Space Cadet ⌨️ 🚀
 
-Remap the macOS space bar so that:
+[![CI](https://github.com/tslight/SpaceCadet/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/tslight/SpaceCadet/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/tag/tslight/SpaceCadet?label=release)](https://github.com/tslight/SpaceCadet/releases)
+[![Downloads](https://img.shields.io/github/downloads/tslight/SpaceCadet/total)](https://github.com/tslight/SpaceCadet/releases)
+[![License](https://img.shields.io/github/license/tslight/SpaceCadet)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-macOS_12%2B-blue)](#)
+[![Swift](https://img.shields.io/badge/Swift-6.1-orange)](#)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](https://github.com/tslight/SpaceCadet/pulls)
+
+Take **CTRL** of your **SPC**
 
 * Press and release space alone inserts a normal space.
-* Hold space alone beyond the threshold (default 600 ms) turns it into Control.
+* Hold space alone beyond the threshold (default 700 ms) turns it into Control.
 * Space plus any other key (chord) immediately acts as Control + that key.
 
-Inspired by "Space Cadet" keyboard behavior.
+Inspired by years of Emacs usage & the "Space Cadet" keyboard that the Lisp machines it was written on came with.
+
+On that keyboard the modifier layout looked like this:
+
+`SUPER > META > CTRL > SPACE < CTRL < META < SUPER`
+
+So modifiers were symmetrical and the most used Control modifier was accessible with the thumbs. On the modern Macbook keyboard we only have one Control key and it's a pinky job - ie) far from ideal for ergonomics. Space Cadet recifies this horrible experience and means that the Control key is given pride of place and can be pressed symmetrically with the thumbs whilst touch typing.
 
 ## Features
 
 * Pure Swift, uses `CGEventTap` (requires Accessibility permission).
-* Single configurable knob: `SPACE_CADET_HOLD_MS` (default 600 ms).
+* Single configurable knob: `SPACE_CADET_HOLD_MS` (default 700 ms).
 * Adaptive tap timing logs help you choose a personal threshold (see stderr output).
 * Status bar app with Preferences (slider) and Toggle Logging.
 * LaunchAgent template for auto-start on login.
@@ -62,7 +76,7 @@ Notes:
 Prebuilt binaries are attached to GitHub Releases when tags like `v0.1.0` are pushed:
 
 - `SpaceCadet-cli-macos.tar.gz` — the CLI binary (SwiftPM release build)
-- `SpaceCadetApp-macos.zip` — the status bar app bundle (`SpaceCadetApp.app`)
+- `SpaceCadetApp-macos.zip` — the status bar app bundle (`Space Cadet.app`)
 - `.sha256` checksum files for both
 
 Verify and install:
@@ -83,7 +97,7 @@ unzip SpaceCadetApp-macos.zip -d /Applications
 
 ## Threshold Tuning
 
-Run with default (600 ms):
+Run with default (700 ms):
 
 ```zsh
 swift run SpaceCadet
@@ -95,7 +109,7 @@ Try a faster threshold (e.g. 300 ms):
 SPACE_CADET_HOLD_MS=300 swift run SpaceCadet
 ```
 
-Or slower (e.g. 700 ms):
+Or slower (e.g. 900 ms):
 
 ```zsh
 SPACE_CADET_HOLD_MS=700 swift run SpaceCadet
