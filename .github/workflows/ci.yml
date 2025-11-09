@@ -22,7 +22,7 @@ jobs:
       - name: Lint
         env:
           DEVELOPER_DIR: /Applications/Xcode.app/Contents/Developer
-        run: swiftlint --quiet
+        run: swiftlint --strict --quiet
       - name: Build
         run: swift build -v
       - name: Test

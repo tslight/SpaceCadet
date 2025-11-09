@@ -1,6 +1,4 @@
 disabled_rules:
-  - line_length
-  - trailing_whitespace
   - identifier_name
   - nesting
   - cyclomatic_complexity
@@ -11,6 +9,7 @@ opt_in_rules:
   - explicit_init
   - redundant_nil_coalescing
   - fatal_error_message
+  - explicit_self
 
 included:
   - Sources
@@ -20,3 +19,11 @@ excluded:
   - build
   - DerivedData
   - SpaceCadetApp/SpaceCadetApp.xcodeproj
+
+line_length:
+  warning: 120
+  ignores_comments: true
+  ignores_urls: true
+
+trailing_whitespace:
+  ignores_empty_lines: true

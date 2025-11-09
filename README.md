@@ -22,6 +22,10 @@ On that keyboard the modifier layout looked like this:
 
 So modifiers were symmetrical and the most used Control modifier was accessible with the thumbs. On the modern Macbook keyboard we only have one Control key and it's a pinky job - ie) far from ideal for ergonomics. Space Cadet recifies this horrible experience and means that the Control key is given pride of place and can be pressed symmetrically with the thumbs whilst touch typing.
 
+*Couldn't I just do this with Karabiner?*
+
+Absolutely. However, I wanted a much more simple app that only did this one thing, and also to learn a bit about macOS development and explore the limits of "vibe" coding in a language I'm not familiar with.
+
 ## Features
 
 * Pure Swift, uses `CGEventTap` (requires Accessibility permission).

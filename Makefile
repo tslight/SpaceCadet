@@ -7,7 +7,7 @@ BIN=.build/release/$(APP)
 XCODE_APP=/Applications/Xcode.app/Contents/Developer
 STRICT?=0
 
-.PHONY: build release run test install-agent unload-agent lint
+.PHONY: build release run test install-agent unload-agent lint lint-strict
 
 lint:
 	@command -v swiftlint >/dev/null 2>&1 || { echo "SwiftLint not installed. Install with: brew install swiftlint"; exit 1; }
@@ -19,6 +19,9 @@ lint:
 		echo "Running SwiftLint with current toolchain"; \
 		swiftlint $(if $(filter 1,$(STRICT)),--strict,); \
 	fi
+
+lint-strict:
+	STRICT=1 $(MAKE) lint
 
 build: lint
 	swift build
