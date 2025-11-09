@@ -2,49 +2,58 @@ name: release-on-green
 
 on:
     workflow_run:
-        workflows: [CI]
-        types:
-            - completed
+        workflows: ["CI"]
+        types: [completed]
 
 jobs:
     tag-on-green:
-        if: >-
-            ${{ github.event.workflow_run.conclusion == 'success' &&
-                (github.event.workflow_run.head_branch == 'main' || github.event.workflow_run.head_branch == 'master') }}
+        if: ${{ github.event.workflow_run.conclusion == 'success' && (github.event.workflow_run.head_branch == 'main' || github.event.workflow_run.head_branch == 'master') }}
         runs-on: ubuntu-latest
         permissions:
             contents: write
         steps:
             - name: Checkout
-              uses: actions/checkout@v4
-              with:
-                  ref: ${{ github.event.workflow_run.head_branch }}
-                  fetch-depth: 0
+                uses: actions/checkout@v4
+                with:
+                    ref: ${{ github.event.workflow_run.head_branch }}
+                    fetch-depth: 0
+
+            - name: Verify branch tip unchanged
+                id: guard
+                run: |
+                    set -e
+                    git fetch origin ${{ github.event.workflow_run.head_branch }}
+                    remote=$(git rev-parse origin/${{ github.event.workflow_run.head_branch }})
+                    echo "remote=$remote"
+                    echo "event=${{ github.event.workflow_run.head_sha }}"
+                    if [ "$remote" != "${{ github.event.workflow_run.head_sha }}" ]; then
+                        echo "skip=true" >> $GITHUB_OUTPUT
+                    else
+                        echo "skip=false" >> $GITHUB_OUTPUT
+                    fi
 
             - name: Compute next tag
-              id: ver
-              run: |
-                  set -e
-                  last=$(git tag --list 'v*' --sort=-v:refname | head -n1)
-                  if [ -z "$last" ]; then
-                    next="v0.0.1"
-                  else
-                    v=${last#v}
-                    IFS='.' read -r major minor patch <<< "$v"
-                    patch=$((patch+1))
-                    next="v${major}.${minor}.${patch}"
-                  fi
-                  echo "tag=$next" >> $GITHUB_OUTPUT
+                id: ver
+                run: |
+                    set -e
+                    last=$(git tag --list 'v*' --sort=-v:refname | head -n1)
+                    if [ -z "$last" ]; then
+                        next="v0.0.1"
+                    else
+                        v=${last#v}
+                        IFS='.' read -r major minor patch <<< "$v"
+                        patch=$((patch+1))
+                        next="v${major}.${minor}.${patch}"
+                    fi
+                    echo "tag=$next" >> $GITHUB_OUTPUT
 
             - name: Create and push tag
-              env:
-                  TAG: ${{ steps.ver.outputs.tag }}
-                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: |
-                  set -e
-                  sha=${{ github.event.workflow_run.head_sha }}
-                  git tag -a "$TAG" -m "Release $TAG (auto tag on green)" "$sha"
-                  git push origin "$TAG"
-                    - name: Record tool versions
-                        run: |
-                            echo "SwiftLint pinned to 0.62.2 (CI workflows)." >> $GITHUB_STEP_SUMMARY
+                if: ${{ steps.guard.outputs.skip == 'false' }}
+                env:
+                    TAG: ${{ steps.ver.outputs.tag }}
+                    GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                run: |
+                    set -e
+                    sha=${{ github.event.workflow_run.head_sha }}
+                    git tag -a "$TAG" -m "Release $TAG (auto tag on green)" "$sha"
+                    git push origin "$TAG"
