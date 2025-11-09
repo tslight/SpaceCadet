@@ -7,9 +7,7 @@ let holdEnv = ProcessInfo.processInfo.environment["SPACE_CADET_HOLD_MS"]
 let holdThresholdMs = Double(holdEnv ?? "") ?? 700.0  // default 700ms
 
 let remapper = KeyRemapper(holdThresholdMs: holdThresholdMs)
-let tap = EventTap(remapHandler: { event in
-    return remapper.handle(event: event)
-})
+let tap = EventTap(remapHandler: { event in remapper.handle(event: event) })
 do {
     try tap.start()
     fputs("[SpaceCadet] hold threshold = \(holdThresholdMs) ms\n", stderr)

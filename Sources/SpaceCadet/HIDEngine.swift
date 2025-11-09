@@ -62,7 +62,7 @@
 
             IOHIDManagerRegisterDeviceMatchingCallback(
                 manager,
-                { ctx, result, sender, device in
+                { ctx, result, _, device in
                     guard result == kIOReturnSuccess, let ctx = ctx else { return }
                     let this = Unmanaged<HIDEngine>.fromOpaque(ctx).takeUnretainedValue()
                     IOHIDDeviceOpen(device, IOOptionBits(kIOHIDOptionsTypeSeizeDevice))
@@ -71,7 +71,7 @@
 
             IOHIDManagerRegisterInputValueCallback(
                 manager,
-                { ctx, result, sender, value in
+                { ctx, result, _, value in
                     guard result == kIOReturnSuccess, let ctx = ctx else { return }
                     let this = Unmanaged<HIDEngine>.fromOpaque(ctx).takeUnretainedValue()
                     this.handle(value: value)

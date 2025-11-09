@@ -172,9 +172,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let effective = holdMs > 0 ? holdMs : defaultHoldMs
         let remapper = KeyRemapper(holdThresholdMs: effective)
         remapper.setLoggingEnabled(loggingEnabled)
-        let tap = EventTap(remapHandler: { event in
-            return remapper.handle(event: event)
-        })
+        let tap = EventTap(remapHandler: { event in remapper.handle(event: event) })
         do {
             try tap.start()
             fputs("[SpaceCadetApp] started (threshold=\(effective) ms)\n", stderr)
@@ -198,9 +196,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Clear lingering state and start with new threshold
         let remapper = KeyRemapper(holdThresholdMs: newHoldMs)
         remapper.setLoggingEnabled(loggingEnabled)
-        let tap = EventTap(remapHandler: { event in
-            return remapper.handle(event: event)
-        })
+        let tap = EventTap(remapHandler: { event in remapper.handle(event: event) })
         do {
             try tap.start()
             fputs("[SpaceCadetApp] restarted (threshold=\(newHoldMs) ms)\n", stderr)

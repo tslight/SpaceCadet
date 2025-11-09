@@ -38,7 +38,7 @@ final class EventTap {
                 place: .headInsertEventTap,
                 options: .defaultTap,
                 eventsOfInterest: CGEventMask(mask),
-                callback: { proxy, type, event, refcon in
+                callback: { _, type, event, refcon in
                     let mySelf = Unmanaged<EventTap>.fromOpaque(refcon!).takeUnretainedValue()
 
                     // Re-enable tap if disabled by timeout
