@@ -16,13 +16,19 @@ jobs:
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: latest-stable
-      - name: Install SwiftLint
+      - name: Install SwiftLint (pinned)
+        env:
+          SWIFTLINT_VERSION: 0.54.0
         run: |
-          brew install swiftlint
-      - name: Lint
+          set -e
+          curl -sSL -o swiftlint.zip "https://github.com/realm/SwiftLint/releases/download/${SWIFTLINT_VERSION}/portable_swiftlint.zip"
+          unzip -q swiftlint.zip -d swiftlint-bin
+          echo "${{ github.workspace }}/swiftlint-bin" >> $GITHUB_PATH
+          swiftlint --version
+      - name: Lint (Makefile)
         env:
           DEVELOPER_DIR: /Applications/Xcode.app/Contents/Developer
-        run: swiftlint --strict --quiet
+        run: make lint-strict
       - name: Analyze (SwiftLint)
         env:
           DEVELOPER_DIR: /Applications/Xcode.app/Contents/Developer

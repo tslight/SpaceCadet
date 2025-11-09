@@ -10,23 +10,34 @@ permissions:
 
 jobs:
     build-release:
-        runs-on: macos-latest
+        runs-on: macos-13
         steps:
             - name: Checkout
               uses: actions/checkout@v4
 
             - name: Set up Xcode
-              run: |
-                  xcodebuild -version
+              uses: maxim-lobanov/setup-xcode@v1
+              with:
+                  xcode-version: latest-stable
 
-            - name: Install SwiftLint
+            - name: Show commit
               run: |
-                  brew install swiftlint
+                  git rev-parse HEAD
 
-            - name: Lint
+            - name: Install SwiftLint (pinned)
+              env:
+                  SWIFTLINT_VERSION: 0.54.0
+              run: |
+                  set -e
+                  curl -sSL -o swiftlint.zip "https://github.com/realm/SwiftLint/releases/download/${SWIFTLINT_VERSION}/portable_swiftlint.zip"
+                  unzip -q swiftlint.zip -d swiftlint-bin
+                  echo "${{ github.workspace }}/swiftlint-bin" >> $GITHUB_PATH
+                  swiftlint --version
+
+            - name: Lint (Makefile)
               env:
                   DEVELOPER_DIR: /Applications/Xcode.app/Contents/Developer
-              run: swiftlint --strict --quiet
+              run: make lint-strict
 
             - name: Analyze (SwiftLint)
               env:
@@ -37,9 +48,9 @@ jobs:
                   xcodebuild -project SpaceCadetApp/SpaceCadetApp.xcodeproj -scheme SpaceCadetApp -configuration Release -derivedDataPath build-app | tee xcodebuild.log || true
                   swiftlint analyze --compiler-log-path xcodebuild.log || true
 
-            - name: Build (App only)
+            - name: Build (SPM)
               run: |
-                  xcodebuild -version
+                  swift build -v
 
             - name: Build App (Release)
               run: |
