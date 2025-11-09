@@ -31,6 +31,23 @@ swift build -c release
 
 Grant Accessibility permission when prompted (System Settings > Privacy & Security > Accessibility). If the prompt does not appear, manually add the built binary.
 
+### macOS App (Status Bar)
+
+To build the background status bar app in Xcode:
+
+1. Open `SpaceCadetApp/SpaceCadetApp.xcodeproj` in Xcode.
+2. Select the `SpaceCadetApp` scheme and hit Run (⌘R).
+3. A status bar item (⌃␣) will appear; click it for a small menu (Enable/Disable, README, Quit).
+
+Notes:
+
+* The app requests Accessibility permission just like the CLI.
+* The app runs as a background accessory (no dock icon), controlled from the status bar.
+* Build requires full Xcode (not just Command Line Tools).
+* Preferences… lets you adjust the hold threshold (150–800 ms). Saved in `UserDefaults` and applied immediately.
+* Adaptive average tap time (shown in CLI/App logs) can guide choosing a threshold (menu action “Suggest Threshold”).
+* “Restart Event Tap” menu item can recover if macOS disables the tap.
+
 ## Threshold Tuning
 
 Run with default (500 ms):

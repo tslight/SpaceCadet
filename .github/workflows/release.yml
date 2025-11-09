@@ -1,0 +1,59 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-release:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Xcode
+        run: |
+          xcodebuild -version
+
+      - name: SwiftPM Build (Release)
+        run: swift build -c release
+
+      - name: Archive CLI Artifact
+        run: |
+          mkdir -p artifacts
+          cp .build/release/SpaceCadet artifacts/SpaceCadet
+          tar -czf artifacts/SpaceCadet-cli-macos.tar.gz -C artifacts SpaceCadet
+          rm artifacts/SpaceCadet
+
+      - name: Build App (Release)
+        run: |
+          xcodebuild -project SpaceCadetApp/SpaceCadetApp.xcodeproj -scheme SpaceCadetApp -configuration Release -derivedDataPath build-app
+
+      - name: Package App Bundle
+        run: |
+          APP_PATH=$(find build-app/Build/Products/Release -name 'SpaceCadetApp.app' -maxdepth 1)
+          if [ -z "$APP_PATH" ]; then echo 'App bundle not found'; exit 1; fi
+          ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" artifacts/SpaceCadetApp-macos.zip
+
+      - name: Generate SHA256 Checksums
+        run: |
+          cd artifacts
+          shasum -a 256 SpaceCadet-cli-macos.tar.gz > SpaceCadet-cli-macos.tar.gz.sha256
+          shasum -a 256 SpaceCadetApp-macos.zip > SpaceCadetApp-macos.zip.sha256
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/SpaceCadet-cli-macos.tar.gz
+            artifacts/SpaceCadet-cli-macos.tar.gz.sha256
+            artifacts/SpaceCadetApp-macos.zip
+            artifacts/SpaceCadetApp-macos.zip.sha256
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Summary
+        run: |
+          echo "CLI and App packaged." >> $GITHUB_STEP_SUMMARY
+          ls -lh artifacts

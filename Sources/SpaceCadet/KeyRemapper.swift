@@ -33,8 +33,8 @@ final class KeyRemapper {
     // Timer for hold threshold
     private var holdTimer: DispatchSourceTimer?
     private var lastSpaceDown: TimeInterval = 0
-    private var adaptiveAvgTap: TimeInterval = 0.0
-    private var adaptiveCount: Int = 0
+    private(set) var adaptiveAvgTap: TimeInterval = 0.0
+    private(set) var adaptiveCount: Int = 0
     private let graceWindow: TimeInterval = 0.015  // 15ms grace to avoid borderline misclassifications
 
     // KeyCodes: macOS virtual key codes
@@ -220,7 +220,10 @@ final class KeyRemapper {
         safetyResetTimer = nil
     }
 
+    private var loggingEnabled: Bool = true
+    func setLoggingEnabled(_ enabled: Bool) { loggingEnabled = enabled }
     private func log(_ msg: String) {
+        guard loggingEnabled else { return }
         fputs("[SpaceCadet] \(msg)\n", stderr)
     }
 

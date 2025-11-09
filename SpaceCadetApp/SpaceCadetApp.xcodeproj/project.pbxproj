@@ -1,0 +1,77 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+	A1B2C3D40E5F001100000001 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D40E5F001000000001 /* AppDelegate.swift */; };
+	A1B2C3D50E5F001100000002 /* StatusBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D50E5F001000000002 /* StatusBarController.swift */; };
+	A1B2C3D60E5F001100000003 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D60E5F001000000003 /* main.swift */; };
+	A1B2C3D90E5F001200000006 /* EventTap.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D90E5F001000000006 /* EventTap.swift */; };
+	A1B2C3DA0E5F001200000007 /* KeyRemapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3DA0E5F001000000007 /* KeyRemapper.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+	A1B2C3D10E5F000F00000001 /* SpaceCadetApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpaceCadetApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+	A1B2C3D40E5F001000000001 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+	A1B2C3D50E5F001000000002 /* StatusBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarController.swift; sourceTree = "<group>"; };
+	A1B2C3D60E5F001000000003 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+	A1B2C3D70E5F001000000004 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+	A1B2C3D80E5F001000000005 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+	A1B2C3D90E5F001000000006 /* EventTap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EventTap.swift; path = ../../Sources/SpaceCadet/EventTap.swift; sourceTree = "<group>"; };
+	A1B2C3DA0E5F001000000007 /* KeyRemapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = KeyRemapper.swift; path = ../../Sources/SpaceCadet/KeyRemapper.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+	A1B2C3C90E5F000E00000001 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = ( ); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+	A1B2C3C30E5F000D00000001 = {isa = PBXGroup; children = (
+            A1B2C3D20E5F001000000000 /* SpaceCadetApp */,
+            A1B2C3D00E5F000F00000002 /* Products */,
+        ); sourceTree = "<group>"; };
+	A1B2C3D00E5F000F00000002 /* Products */ = {isa = PBXGroup; children = ( A1B2C3D10E5F000F00000001 /* SpaceCadetApp.app */, ); name = Products; sourceTree = "<group>"; };
+	A1B2C3D20E5F001000000000 /* SpaceCadetApp */ = {isa = PBXGroup; children = (
+            A1B2C3D40E5F001000000001 /* AppDelegate.swift */,
+            A1B2C3D50E5F001000000002 /* StatusBarController.swift */,
+            A1B2C3D60E5F001000000003 /* main.swift */,
+            A1B2C3D70E5F001000000004 /* Info.plist */,
+            A1B2C3D80E5F001000000005 /* Assets.xcassets */,
+            A1B2C3D90E5F001000000006 /* EventTap.swift */,
+            A1B2C3DA0E5F001000000007 /* KeyRemapper.swift */,
+        ); path = SpaceCadetApp; sourceTree = "<group>"; };
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+	A1B2C3C70E5F000E00000001 /* SpaceCadetApp */ = {isa = PBXNativeTarget; buildConfigurationList = A1B2C3CE0E5F000E00000001 /* Build configuration list for PBXNativeTarget "SpaceCadetApp" */; buildPhases = (
+            A1B2C3C80E5F000E00000001 /* Sources */, A1B2C3C90E5F000E00000001 /* Frameworks */, A1B2C3CA0E5F000E00000001 /* Resources */ ); buildRules = ( ); dependencies = ( ); name = SpaceCadetApp; productName = SpaceCadetApp; productReference = A1B2C3D10E5F000F00000001 /* SpaceCadetApp.app */; productType = "com.apple.product-type.application"; };
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+	A1B2C3C40E5F000D00000001 /* Project object */ = {isa = PBXProject; attributes = { LastSwiftUpdateCheck = 1500; LastUpgradeCheck = 1500; TargetAttributes = { A1B2C3C70E5F000E00000001 = { ProvisioningStyle = Automatic; }; }; }; buildConfigurationList = A1B2C3C60E5F000D00000001 /* Build configuration list for PBXProject "SpaceCadetApp" */; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = ( en ); mainGroup = A1B2C3C30E5F000D00000001; productRefGroup = A1B2C3D00E5F000F00000002 /* Products */; projectDirPath = ""; projectRoot = ""; targets = ( A1B2C3C70E5F000E00000001 /* SpaceCadetApp */ ); };
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+	A1B2C3CA0E5F000E00000001 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = ( ); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+	A1B2C3C80E5F000E00000001 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = ( A1B2C3D40E5F001100000001 /* AppDelegate.swift in Sources */, A1B2C3D50E5F001100000002 /* StatusBarController.swift in Sources */, A1B2C3D60E5F001100000003 /* main.swift in Sources */, A1B2C3D90E5F001200000006 /* EventTap.swift in Sources */, A1B2C3DA0E5F001200000007 /* KeyRemapper.swift in Sources */ ); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+	A1B2C3CC0E5F000E00000001 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = { CLANG_ENABLE_MODULES = YES; CODE_SIGN_STYLE = Automatic; COMBINE_HIDPI_IMAGES = YES; INFOPLIST_FILE = SpaceCadetApp/Info.plist; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks"; MACOSX_DEPLOYMENT_TARGET = 12.0; PRODUCT_BUNDLE_IDENTIFIER = com.tslight.SpaceCadet; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = macosx; SWIFT_VERSION = 5.0; }; name = Debug; };
+	A1B2C3CD0E5F000E00000001 /* Release */ = {isa = XCBuildConfiguration; buildSettings = { CLANG_ENABLE_MODULES = YES; CODE_SIGN_STYLE = Automatic; COMBINE_HIDPI_IMAGES = YES; INFOPLIST_FILE = SpaceCadetApp/Info.plist; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks"; MACOSX_DEPLOYMENT_TARGET = 12.0; PRODUCT_BUNDLE_IDENTIFIER = com.tslight.SpaceCadet; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = macosx; SWIFT_VERSION = 5.0; }; name = Release; };
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+	A1B2C3C60E5F000D00000001 /* Build configuration list for PBXProject "SpaceCadetApp" */ = {isa = XCConfigurationList; buildConfigurations = ( A1B2C3CC0E5F000E00000001 /* Debug */, A1B2C3CD0E5F000E00000001 /* Release */ ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+	A1B2C3CE0E5F000E00000001 /* Build configuration list for PBXNativeTarget "SpaceCadetApp" */ = {isa = XCConfigurationList; buildConfigurations = ( A1B2C3CC0E5F000E00000001 /* Debug */, A1B2C3CD0E5F000E00000001 /* Release */ ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+/* End XCConfigurationList section */
+
+	};
+	rootObject = A1B2C3C40E5F000D00000001 /* Project object */;
+}
