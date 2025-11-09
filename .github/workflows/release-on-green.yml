@@ -62,3 +62,47 @@ jobs:
           sha=${{ github.event.workflow_run.head_sha }}
           git tag -a "$TAG" -m "Release $TAG (auto tag on green)" "$sha"
           git push origin "$TAG"
+
+      - name: Set up Xcode
+        if: ${{ steps.guard.outputs.skip == 'false' }}
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - name: Build (SPM)
+        if: ${{ steps.guard.outputs.skip == 'false' }}
+        run: |
+          swift build -v
+
+      - name: Build App (Release)
+        if: ${{ steps.guard.outputs.skip == 'false' }}
+        run: |
+          xcodebuild -project SpaceCadetApp/SpaceCadetApp.xcodeproj -scheme SpaceCadetApp -configuration Release -derivedDataPath build-app
+
+      - name: Package App Bundle (ZIP & DMG)
+        if: ${{ steps.guard.outputs.skip == 'false' }}
+        run: |
+          APP_PATH=$(ls -d build-app/Build/Products/Release/Space\ Cadet.app 2>/dev/null || true)
+          if [ -z "$APP_PATH" ]; then APP_PATH=$(find build-app/Build/Products/Release -type d -name 'Space Cadet.app' | head -n 1); fi
+          if [ -z "$APP_PATH" ]; then echo 'App bundle not found'; exit 1; fi
+          mkdir -p artifacts
+          ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" artifacts/SpaceCadet.zip
+          bash scripts/build-dmg.sh "$APP_PATH" artifacts/SpaceCadet.dmg assets/dmg_background.png
+
+      - name: Generate SHA256 Checksums
+        if: ${{ steps.guard.outputs.skip == 'false' }}
+        run: |
+          cd artifacts
+          shasum -a 256 SpaceCadet.zip > SpaceCadet.zip.sha256
+          shasum -a 256 SpaceCadet.dmg > SpaceCadet.dmg.sha256
+
+      - name: Create GitHub Release
+        if: ${{ steps.guard.outputs.skip == 'false' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.ver.outputs.tag }}
+          files: |
+            artifacts/SpaceCadet.zip
+            artifacts/SpaceCadet.zip.sha256
+            artifacts/SpaceCadet.dmg
+            artifacts/SpaceCadet.dmg.sha256
