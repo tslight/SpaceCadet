@@ -9,7 +9,6 @@ opt_in_rules:
   - explicit_init
   - redundant_nil_coalescing
   - fatal_error_message
-  - explicit_self
 
 included:
   - Sources
@@ -27,3 +26,6 @@ line_length:
 
 trailing_whitespace:
   ignores_empty_lines: true
+
+analyzer_rules:
+  - explicit_self

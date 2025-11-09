@@ -20,7 +20,11 @@ On that keyboard the modifier layout looked like this:
 
 `SUPER/WIN/CMD > META/ALT/OPT > CTRL >  S P A C E  < CTRL < META/ALT/OPT < SUPER/WIN/CMD`
 
-So modifiers were symmetrical and the most used Control modifier was accessible with the thumbs. On the modern Macbook keyboard we only have one Control key and it's a pinky job - ie) far from ideal for ergonomics. Space Cadet recifies this horrible experience and means that the Control key is given pride of place and can be pressed symmetrically with the thumbs whilst touch typing.
+Modifiers were symmetrical and the most used Control modifier was accessible with the thumbs.
+
+On the modern Macbook keyboard we only have one Control key and it's a pinky job - ie) far from ideal for ergonomics.
+
+Space Cadet recifies this horrible, RSI inducing experience and means that the Control key is given pride of place and can be pressed symmetrically with the thumbs whilst touch typing 😊.
 
 *Couldn't I just do this with Karabiner?*
 
@@ -41,7 +45,7 @@ Absolutely. However, I wanted a much more simple app that only did this one thin
 3. Launch the app from Applications. When prompted, grant Accessibility permission (System Settings > Privacy & Security > Accessibility). If you don’t see the prompt, add the app manually.
 4. Adjust your hold threshold in Preferences. You can toggle logging and use “Suggest Threshold” to approximate a good value.
 
-### macOS App (Status Bar)
+### Build
 
 To build the background status bar app in Xcode:
 

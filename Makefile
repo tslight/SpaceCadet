@@ -23,6 +23,15 @@ lint:
 lint-strict:
 	STRICT=1 $(MAKE) lint
 
+.PHONY: lint-analyze
+lint-analyze:
+	@command -v swiftlint >/dev/null 2>&1 || { echo "SwiftLint not installed. Install with: brew install swiftlint"; exit 1; }
+	@if [ -d "$(XCODE_APP)" ]; then \
+		DEVELOPER_DIR=$(XCODE_APP) swiftlint analyze --compiler-log-path swiftlint.log || true; \
+	else \
+		swiftlint analyze --compiler-log-path swiftlint.log || true; \
+	fi
+
 build: lint
 	swift build
 

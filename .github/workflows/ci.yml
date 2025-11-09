@@ -23,6 +23,14 @@ jobs:
         env:
           DEVELOPER_DIR: /Applications/Xcode.app/Contents/Developer
         run: swiftlint --strict --quiet
+      - name: Analyze (SwiftLint)
+        env:
+          DEVELOPER_DIR: /Applications/Xcode.app/Contents/Developer
+        run: |
+          set -e
+          # Generate compiler log for analyze; use swift build for spm target
+          swift build -v 2> swiftlint.log || true
+          swiftlint analyze --compiler-log-path swiftlint.log || true
       - name: Build
         run: swift build -v
       - name: Test

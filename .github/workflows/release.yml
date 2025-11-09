@@ -28,6 +28,15 @@ jobs:
                   DEVELOPER_DIR: /Applications/Xcode.app/Contents/Developer
               run: swiftlint --strict --quiet
 
+            - name: Analyze (SwiftLint)
+              env:
+                  DEVELOPER_DIR: /Applications/Xcode.app/Contents/Developer
+              run: |
+                  set -e
+                  # Produce compiler log; use xcodebuild for the app target
+                  xcodebuild -project SpaceCadetApp/SpaceCadetApp.xcodeproj -scheme SpaceCadetApp -configuration Release -derivedDataPath build-app | tee xcodebuild.log || true
+                  swiftlint analyze --compiler-log-path xcodebuild.log || true
+
             - name: Build (App only)
               run: |
                   xcodebuild -version

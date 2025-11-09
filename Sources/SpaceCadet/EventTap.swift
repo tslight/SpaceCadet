@@ -39,19 +39,17 @@ final class EventTap {
                 options: .defaultTap,
                 eventsOfInterest: CGEventMask(mask),
                 callback: { _, type, event, refcon in
-                    let mySelf = Unmanaged<EventTap>.fromOpaque(refcon!).takeUnretainedValue()
+                    guard let refcon = refcon else { return Unmanaged.passUnretained(event) }
+                    let mySelf = Unmanaged<EventTap>.fromOpaque(refcon).takeUnretainedValue()
 
                     // Re-enable tap if disabled by timeout
                     if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
-                        CGEvent.tapEnable(tap: mySelf.tap!, enable: true)
+                        if let liveTap = mySelf.tap { CGEvent.tapEnable(tap: liveTap, enable: true) }
                         return Unmanaged.passUnretained(event)
                     }
 
-                    if let newEvent = mySelf.handler(event) {
-                        return Unmanaged.passUnretained(newEvent)
-                    } else {
-                        return nil
-                    }
+                    if let newEvent = mySelf.handler(event) { return Unmanaged.passUnretained(newEvent) }
+                    return nil
                 },
                 userInfo: UnsafeMutableRawPointer(Unmanaged.passUnretained(self).toOpaque())
             )
