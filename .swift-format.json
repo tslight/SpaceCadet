@@ -1,18 +1,18 @@
 {
-  "version": 1,
-  "indentation": {
-    "spaces": 4,
-    "tabs": false
-  },
-  "lineLength": 120,
-  "maximumBlankLines": 1,
-  "respectExistingLineBreaks": true,
-  "respectsExistingEmptyLines": true,
-  "multiLineTrailingCommas": false,
-  "spacesAroundRangeOperators": true,
-  "trimWhitespace": true,
-  "indentConditionalCompilationBlocks": true,
-  "prioritizeKeepingFunctionOutputTogether": true,
-  "wrapReturnType": "auto",
-  "groupImportStatements": "none"
+    "version": 1,
+    "indentation": {
+        "spaces": 4,
+        "tabs": false
+    },
+    "lineLength": 120,
+    "maximumBlankLines": 1,
+    "respectExistingLineBreaks": true,
+    "respectsExistingEmptyLines": true,
+    "multiLineTrailingCommas": false,
+    "spacesAroundRangeOperators": true,
+    "trimWhitespace": true,
+    "indentConditionalCompilationBlocks": true,
+    "prioritizeKeepingFunctionOutputTogether": true,
+    "wrapReturnType": "auto",
+    "groupImportStatements": "none"
 }

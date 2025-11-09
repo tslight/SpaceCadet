@@ -121,6 +121,27 @@ swift build -c release
 ./.build/release/SpaceCadet
 ```
 
+### Building the App Bundle (Xcode)
+
+To catch target drift (files not added to the Xcode project), build the app bundle via Makefile:
+
+```zsh
+make app-build
+open build-app/Build/Products/Release/"Space Cadet.app"
+```
+
+CI also runs this build so missing source files trigger failures early.
+
+### Formatting & Lint Fixes
+
+SwiftLint enforces style; a formatter may auto-insert trailing commas or reflow closures. To normalize code before committing:
+
+```zsh
+make lint-fix   # runs swiftlint --fix (no trailing commas, closure params inline)
+```
+
+An optional `.swift-format.json` is included for editors; ensure it does not reintroduce trailing commas. Disable conflicting "format on save" settings or align them with SwiftLint.
+
 Adjust threshold when running CLI via env var:
 
 ```zsh

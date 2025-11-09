@@ -50,8 +50,15 @@ final class EventTap {
                         return Unmanaged.passUnretained(event)
                     }
 
-                    if let newEvent = mySelf.handler(event) {
-                        return Unmanaged.passUnretained(newEvent)
+                    if let returned = mySelf.handler(event) {
+                        // If the handler returns the original event, don't retain it; if it
+                        // returns a newly created CGEvent, we must return a retained reference
+                        // so the system owns it for delivery.
+                        if returned === event {
+                            return Unmanaged.passUnretained(returned)
+                        } else {
+                            return Unmanaged.passRetained(returned)
+                        }
                     }
                     return nil
                 },
