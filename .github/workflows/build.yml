@@ -16,6 +16,8 @@ jobs:
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: latest-stable
+      - name: Install librsvg
+        run: brew install librsvg
       - name: Install SwiftLint (pinned)
         env:
           SWIFTLINT_VERSION: 0.62.2
@@ -47,6 +49,8 @@ jobs:
         run: swift build -v
       - name: Test
         run: swift test -v || true # tests are currently minimal
+      - name: Regenerate app icons
+        run: bash scripts/gen-appicon.sh assets/space_cadet_icon.svg
       - name: Build SpaceCadetApp (Xcode Release)
         run: |
           xcodebuild -project SpaceCadetApp/SpaceCadetApp.xcodeproj -scheme SpaceCadetApp -configuration Release -derivedDataPath build-app
