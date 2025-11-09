@@ -65,8 +65,8 @@ tell application "Finder"
       set background picture of viewOptions to file ".background:dmg_background.png"
     end try
     delay 0.2
-    set position of file "Space Cadet.app" to {160, 300}
-    set position of file "Applications" to {620, 300}
+  set position of file "Space Cadet.app" to {280, 270}
+  set position of file "Applications" to {520, 270}
     update without registering applications
     delay 0.2
     close
