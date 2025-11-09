@@ -44,11 +44,15 @@ final class EventTap {
 
                     // Re-enable tap if disabled by timeout
                     if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
-                        if let liveTap = mySelf.tap { CGEvent.tapEnable(tap: liveTap, enable: true) }
+                        if let liveTap = mySelf.tap {
+                            CGEvent.tapEnable(tap: liveTap, enable: true)
+                        }
                         return Unmanaged.passUnretained(event)
                     }
 
-                    if let newEvent = mySelf.handler(event) { return Unmanaged.passUnretained(newEvent) }
+                    if let newEvent = mySelf.handler(event) {
+                        return Unmanaged.passUnretained(newEvent)
+                    }
                     return nil
                 },
                 userInfo: UnsafeMutableRawPointer(Unmanaged.passUnretained(self).toOpaque())

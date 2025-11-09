@@ -40,7 +40,7 @@ Absolutely. However, I wanted a much more simple app that only did this one thin
 
 ## Install
 
-1. Download the latest DMG from the Releases page: `Space-Cadet-macOS.dmg`.
+1. Download the latest DMG from the Releases page: `SpaceCadet.dmg`.
 2. Open the DMG and drag “Space Cadet.app” to Applications.
 3. Launch the app from Applications. When prompted, grant Accessibility permission (System Settings > Privacy & Security > Accessibility). If you don’t see the prompt, add the app manually.
 4. Adjust your hold threshold in Preferences. You can toggle logging and use “Suggest Threshold” to approximate a good value.
@@ -74,22 +74,22 @@ Notes:
 
 Prebuilt artifacts are attached to GitHub Releases (when tags like `v0.1.0` are pushed):
 
-- `Space-Cadet-macOS.dmg` — drag-and-drop installer (recommended)
-- `SpaceCadetApp-macos.zip` — zipped app bundle (optional)
+- `SpaceCadet.dmg` — drag-and-drop installer (recommended)
+- `SpaceCadet.zip` — zipped app bundle (optional)
 - `.sha256` checksum files
 
 Verify and install:
 
 ```zsh
 # Verify checksums (optional)
-shasum -a 256 -c Space-Cadet-macOS.dmg.sha256
-shasum -a 256 -c SpaceCadetApp-macos.zip.sha256
+shasum -a 256 -c SpaceCadet.dmg.sha256
+shasum -a 256 -c SpaceCadet.zip.sha256
 
 # Install from DMG (recommended)
-open Space-Cadet-macOS.dmg  # then drag Space Cadet.app to Applications
+open SpaceCadet.dmg  # then drag Space Cadet.app to Applications
 
 # Alternatively, install from ZIP
-unzip SpaceCadetApp-macos.zip -d /Applications
+unzip SpaceCadet.zip -d /Applications
 # If Gatekeeper warns, right-click the app → Open → Open.
 ```
 
@@ -150,13 +150,6 @@ make unload-agent
 
 The app only intercepts key events locally; it does not log or persist keystrokes. Review the source to verify behavior.
 
-## Tests
-## App Icon
-
-An asset catalog stub (`AppIcon.appiconset`) is included. To generate placeholder icons from an image or SF Symbol:
-
-```zsh
-./scripts/gen-appicon.sh path/to/source-1024.png
 ## Tests
 
 Run unit tests:

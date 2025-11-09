@@ -45,32 +45,33 @@ jobs:
               run: |
                   xcodebuild -project SpaceCadetApp/SpaceCadetApp.xcodeproj -scheme SpaceCadetApp -configuration Release -derivedDataPath build-app
 
-            - name: Package App Bundle (ZIP)
+            - name: Package App Bundle (ZIP & DMG)
               run: |
                   APP_PATH=$(ls -d build-app/Build/Products/Release/Space\ Cadet.app 2>/dev/null || true)
                   if [ -z "$APP_PATH" ]; then APP_PATH=$(find build-app/Build/Products/Release -type d -name 'Space Cadet.app' | head -n 1); fi
-                    if [ -z "$APP_PATH" ]; then echo 'App bundle not found'; exit 1; fi
-                  ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" artifacts/SpaceCadetApp-macos.zip
-                  bash scripts/build-dmg.sh "$APP_PATH" artifacts/Space-Cadet-macOS.dmg assets/dmg_background.png
+                  if [ -z "$APP_PATH" ]; then echo 'App bundle not found'; exit 1; fi
+                  mkdir -p artifacts
+                  ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" artifacts/SpaceCadet.zip
+                  bash scripts/build-dmg.sh "$APP_PATH" artifacts/SpaceCadet.dmg assets/dmg_background.png
 
             - name: Generate SHA256 Checksums
               run: |
                   cd artifacts
-                  shasum -a 256 SpaceCadetApp-macos.zip > SpaceCadetApp-macos.zip.sha256
-                  shasum -a 256 Space-Cadet-macOS.dmg > Space-Cadet-macOS.dmg.sha256
+                  shasum -a 256 SpaceCadet.zip > SpaceCadet.zip.sha256
+                  shasum -a 256 SpaceCadet.dmg > SpaceCadet.dmg.sha256
 
             - name: Create GitHub Release
               uses: softprops/action-gh-release@v2
               with:
                   files: |
-                      artifacts/SpaceCadetApp-macos.zip
-                      artifacts/SpaceCadetApp-macos.zip.sha256
-                      artifacts/Space-Cadet-macOS.dmg
-                      artifacts/Space-Cadet-macOS.dmg.sha256
+                      artifacts/SpaceCadet.zip
+                      artifacts/SpaceCadet.zip.sha256
+                      artifacts/SpaceCadet.dmg
+                      artifacts/SpaceCadet.dmg.sha256
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Summary
               run: |
-                  echo "App packaged (ZIP + DMG)." >> $GITHUB_STEP_SUMMARY
+                  echo "App packaged (SpaceCadet.zip + SpaceCadet.dmg)." >> $GITHUB_STEP_SUMMARY
                   ls -lh artifacts
