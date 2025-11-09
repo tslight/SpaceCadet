@@ -1,86 +1,43 @@
-name: release-on-green
+name: build-and-release
 
 on:
-  workflow_run:
-    workflows: ["CI"]
-    types: [completed]
+  push:
+    branches: [main, master]
+
+permissions:
+  contents: write
 
 jobs:
-  tag-on-green:
-    if: ${{ github.event.workflow_run.conclusion == 'success' && (github.event.workflow_run.head_branch == 'main' || github.event.workflow_run.head_branch == 'master') }}
+  build-release:
     runs-on: macos-13
-    permissions:
-      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.workflow_run.head_branch }}
           fetch-depth: 0
 
-      - name: Configure git
-        run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
-
-      - name: Verify branch tip unchanged
-        id: guard
+      - name: Get current tag
+        id: tag
         run: |
           set -e
-          git fetch origin ${{ github.event.workflow_run.head_branch }}
-          remote=$(git rev-parse origin/${{ github.event.workflow_run.head_branch }})
-          echo "remote=$remote"
-          echo "event=${{ github.event.workflow_run.head_sha }}"
-          if [ "$remote" != "${{ github.event.workflow_run.head_sha }}" ]; then
-            echo "skip=true" >> $GITHUB_OUTPUT
-          else
-            echo "skip=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Compute next tag
-        id: ver
-        run: |
-          set -e
-          last=$(git tag --list 'v*' --sort=-v:refname | head -n1)
-          if [ -z "$last" ]; then
-            next="v0.0.1"
-          else
-            v=${last#v}
-            IFS='.' read -r major minor patch <<< "$v"
-            patch=$((patch+1))
-            next="v${major}.${minor}.${patch}"
-          fi
-          echo "tag=$next" >> $GITHUB_OUTPUT
-
-      - name: Create and push tag
-        if: ${{ steps.guard.outputs.skip == 'false' }}
-        env:
-          TAG: ${{ steps.ver.outputs.tag }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -e
-          sha=${{ github.event.workflow_run.head_sha }}
-          git tag -a "$TAG" -m "Release $TAG (auto tag on green)" "$sha"
-          git push origin "$TAG"
+          tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.1")
+          echo "current=$tag" >> $GITHUB_OUTPUT
+          echo "Building and releasing for tag: $tag"
 
       - name: Set up Xcode
-        if: ${{ steps.guard.outputs.skip == 'false' }}
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: latest-stable
 
       - name: Build (SPM)
-        if: ${{ steps.guard.outputs.skip == 'false' }}
         run: |
           swift build -v
 
       - name: Build App (Release)
-        if: ${{ steps.guard.outputs.skip == 'false' }}
         run: |
           xcodebuild -project SpaceCadetApp/SpaceCadetApp.xcodeproj -scheme SpaceCadetApp -configuration Release -derivedDataPath build-app
 
       - name: Package App Bundle (ZIP & DMG)
-        if: ${{ steps.guard.outputs.skip == 'false' }}
         run: |
           APP_PATH=$(ls -d build-app/Build/Products/Release/Space\ Cadet.app 2>/dev/null || true)
           if [ -z "$APP_PATH" ]; then APP_PATH=$(find build-app/Build/Products/Release -type d -name 'Space Cadet.app' | head -n 1); fi
@@ -90,19 +47,25 @@ jobs:
           bash scripts/build-dmg.sh "$APP_PATH" artifacts/SpaceCadet.dmg assets/dmg_background.png
 
       - name: Generate SHA256 Checksums
-        if: ${{ steps.guard.outputs.skip == 'false' }}
         run: |
           cd artifacts
           shasum -a 256 SpaceCadet.zip > SpaceCadet.zip.sha256
           shasum -a 256 SpaceCadet.dmg > SpaceCadet.dmg.sha256
 
-      - name: Create GitHub Release
-        if: ${{ steps.guard.outputs.skip == 'false' }}
+      - name: Create or Update GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.ver.outputs.tag }}
+          tag_name: ${{ steps.tag.outputs.current }}
           files: |
             artifacts/SpaceCadet.zip
             artifacts/SpaceCadet.zip.sha256
             artifacts/SpaceCadet.dmg
             artifacts/SpaceCadet.dmg.sha256
+          prerelease: false
+          draft: false
+          make_latest: true
+
+      - name: Summary
+        run: |
+          echo "App packaged and released for ${{ steps.tag.outputs.current }}" >> $GITHUB_STEP_SUMMARY
+          ls -lh artifacts
