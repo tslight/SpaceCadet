@@ -28,17 +28,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func setupStatusBar() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem.button {
-            if let img = NSImage(named: "StatusBarIcon") {
-                img.isTemplate = true
-                button.image = img
-            } else if #available(macOS 11.0, *) {
-                button.image = NSImage(
-                    systemSymbolName: "keyboard.badge.ellipsis",
-                    accessibilityDescription: "Space Cadet")
-                button.image?.isTemplate = true
-            } else {
-                button.title = "⌃␣"
-            }
+            button.image = loadStatusBarIcon()
             button.toolTip = "Space Cadet"
         }
         let menu = NSMenu()
@@ -71,6 +61,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         self.menu = menu
         statusItem.menu = menu
+    }
+
+    private func loadStatusBarIcon() -> NSImage {
+        let bundle = Bundle.main
+        if let img = bundle.image(forResource: "StatusBarIcon") {
+            img.isTemplate = true
+            return img
+        } else if let img = NSImage(named: "StatusBarIcon") {
+            img.isTemplate = true
+            return img
+        } else if #available(macOS 11.0, *) {
+            let img = NSImage(
+                systemSymbolName: "keyboard.badge.ellipsis",
+                accessibilityDescription: "Space Cadet") ?? NSImage()
+            img.isTemplate = true
+            return img
+        } else {
+            return NSImage()
+        }
     }
 
     @objc private func toggleEnabled() {
