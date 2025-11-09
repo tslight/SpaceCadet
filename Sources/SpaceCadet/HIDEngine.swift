@@ -2,7 +2,6 @@
 #if HID_ENGINE_EXPERIMENTAL
     import Foundation
     import IOKit.hid
-    import IOKit
 
     // Forward declarations for IOHIDUserDevice (not exposed in Swift automatically)
     @_silgen_name("IOHIDUserDeviceCreate")
@@ -56,7 +55,7 @@
             manager = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
             let match: [String: Any] = [
                 kIOHIDDeviceUsagePageKey as String: kHIDPage_GenericDesktop,
-                kIOHIDDeviceUsageKey as String: kHIDUsage_GD_Keyboard,
+                kIOHIDDeviceUsageKey as String: kHIDUsage_GD_Keyboard
             ]
             IOHIDManagerSetDeviceMatching(manager, match as CFDictionary)
 
@@ -89,7 +88,7 @@
                 0x95, 0x01, 0x75, 0x08, 0x81, 0x01,  // 1 byte padding
                 0x95, 0x06, 0x75, 0x08, 0x15, 0x00, 0x26, 0xA4, 0x00,
                 0x05, 0x07, 0x19, 0x00, 0x29, 0xA4, 0x81, 0x00,
-                0xC0,
+                0xC0
             ]
             let props: [String: Any] = [
                 kIOHIDReportDescriptorKey as String: Data(descriptor),
@@ -98,7 +97,7 @@
                 kIOHIDManufacturerKey as String: "SpaceCadet",
                 kIOHIDProductKey as String: "SpaceCadet Virtual Keyboard",
                 kIOHIDDeviceUsagePageKey as String: kHIDPage_GenericDesktop,
-                kIOHIDDeviceUsageKey as String: kHIDUsage_GD_Keyboard,
+                kIOHIDDeviceUsageKey as String: kHIDUsage_GD_Keyboard
             ]
             guard let vd = IOHIDUserDeviceCreate(kCFAllocatorDefault, props as CFDictionary) else {
                 throw err("IOHIDUserDeviceCreate failed", code: kIOReturnError)

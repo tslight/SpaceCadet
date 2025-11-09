@@ -40,7 +40,7 @@ enum LaunchAtLoginManager {
             "Label": label,
             "ProgramArguments": [executablePath],
             "RunAtLoad": true,
-            "KeepAlive": true,
+            "KeepAlive": true
         ]
         let data = try PropertyListSerialization.data(
             fromPropertyList: contents, format: .xml, options: 0)
