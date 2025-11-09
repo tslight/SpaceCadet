@@ -8,7 +8,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var tap: EventTap?
     private var remapper: KeyRemapper?
     private var enabled: Bool = true
-    private let defaultHoldMs: Double = 500.0
+    private let defaultHoldMs: Double = 600.0
     private let thresholdKey = "SpaceCadetHoldMs"
     private var prefsWindow: NSWindow?
     private var loggingEnabled: Bool = true
@@ -27,8 +27,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func setupStatusBar() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem.button {
-            button.title = "⌃␣"
-            button.toolTip = "SpaceCadet"
+            if let img = NSImage(named: "StatusBarIcon") {
+                img.isTemplate = true
+                button.image = img
+            } else if #available(macOS 11.0, *) {
+                button.image = NSImage(
+                    systemSymbolName: "keyboard.badge.ellipsis",
+                    accessibilityDescription: "Space Cadet")
+                button.image?.isTemplate = true
+            } else {
+                button.title = "⌃␣"
+            }
+            button.toolTip = "Space Cadet"
         }
         let menu = NSMenu()
         menu.addItem(withTitle: "Enabled", action: #selector(toggleEnabled), keyEquivalent: "")
@@ -47,7 +57,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(NSMenuItem.separator())
         menu.addItem(withTitle: "Open README", action: #selector(openReadme), keyEquivalent: "")
         menu.addItem(NSMenuItem.separator())
-        menu.addItem(withTitle: "Quit SpaceCadet", action: #selector(quit), keyEquivalent: "q")
+        menu.addItem(withTitle: "Quit Space Cadet", action: #selector(quit), keyEquivalent: "q")
         menu.items.first?.state = .on
         self.menu = menu
         statusItem.menu = menu

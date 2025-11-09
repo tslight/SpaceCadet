@@ -12,7 +12,7 @@
 			"isBackground": false,
 			"problemMatcher": [],
 			"group": "build"
-		}
+		},
 		{
 			"label": "Run SpaceCadet (HID)",
 			"type": "shell",
