@@ -60,8 +60,7 @@
             IOHIDManagerSetDeviceMatching(manager, match as CFDictionary)
 
             IOHIDManagerRegisterDeviceMatchingCallback(
-                manager,
-                { ctx, result, _, device in
+                manager, { ctx, result, _, device in
                     guard result == kIOReturnSuccess, let ctx = ctx else { return }
                     let this = Unmanaged<HIDEngine>.fromOpaque(ctx).takeUnretainedValue()
                     IOHIDDeviceOpen(device, IOOptionBits(kIOHIDOptionsTypeSeizeDevice))
@@ -69,8 +68,7 @@
                 }, UnsafeMutableRawPointer(Unmanaged.passUnretained(self).toOpaque()))
 
             IOHIDManagerRegisterInputValueCallback(
-                manager,
-                { ctx, result, _, value in
+                manager, { ctx, result, _, value in
                     guard result == kIOReturnSuccess, let ctx = ctx else { return }
                     let this = Unmanaged<HIDEngine>.fromOpaque(ctx).takeUnretainedValue()
                     this.handle(value: value)
