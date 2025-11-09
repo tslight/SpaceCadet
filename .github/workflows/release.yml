@@ -33,7 +33,7 @@ jobs:
                   if [ -z "$APP_PATH" ]; then APP_PATH=$(find build-app/Build/Products/Release -type d -name 'Space Cadet.app' | head -n 1); fi
                     if [ -z "$APP_PATH" ]; then echo 'App bundle not found'; exit 1; fi
                   ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" artifacts/SpaceCadetApp-macos.zip
-                  bash scripts/build-dmg.sh "$APP_PATH" artifacts/Space-Cadet-macOS.dmg
+                  bash scripts/build-dmg.sh "$APP_PATH" artifacts/Space-Cadet-macOS.dmg assets/dmg_background.png
 
             - name: Generate SHA256 Checksums
               run: |
