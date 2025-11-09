@@ -1,6 +1,10 @@
 {
-  "[swift]": {
-    "editor.formatOnSave": false,
-    "editor.formatOnPaste": false
-  }
+    "[swift]": {
+        "editor.formatOnSave": false,
+        "editor.formatOnPaste": false
+    },
+    "[json]": {
+        "editor.formatOnSave": false,
+        "editor.formatOnPaste": false
+    }
 }
