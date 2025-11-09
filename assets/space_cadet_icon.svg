@@ -1,21 +1,66 @@
 <svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1024" height="1024" rx="180" fill="#111111"/>
-  <g fill="#1c1c1c" stroke="#3a3a3a" stroke-width="8">
-    <rect x="140" y="240" width="140" height="110" rx="22"/>
-    <rect x="300" y="240" width="140" height="110" rx="22"/>
-    <rect x="460" y="240" width="140" height="110" rx="22"/>
-    <rect x="620" y="240" width="140" height="110" rx="22"/>
-    <rect x="780" y="240" width="140" height="110" rx="22"/>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#22262E"/>
+      <stop offset="100%" stop-color="#0E1116"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#5AC8FA"/>
+      <stop offset="100%" stop-color="#0A84FF"/>
+    </linearGradient>
+    <filter id="innerShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feOffset dx="0" dy="6"/>
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feComposite in="SourceAlpha" in2="blur" operator="arithmetic" k2="-1" k3="1" result="shadowDiff"/>
+      <feColorMatrix in="shadowDiff" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.4 0"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="drop" x="-50%" y="-50%" width="200%" height="200%">
+      <feOffset dx="0" dy="12"/>
+      <feGaussianBlur stdDeviation="16" result="blur2"/>
+      <feColorMatrix in="blur2" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.35 0"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
 
-    <rect x="170" y="380" width="140" height="110" rx="22"/>
-    <rect x="330" y="380" width="140" height="110" rx="22"/>
-    <rect x="490" y="380" width="140" height="110" rx="22"/>
-    <rect x="650" y="380" width="140" height="110" rx="22"/>
+  <!-- Rounded squircle background in Big Sur style -->
+  <rect width="1024" height="1024" rx="196" fill="url(#bg)"/>
 
-    <rect x="210" y="520" width="140" height="110" rx="22"/>
-    <rect x="370" y="520" width="140" height="110" rx="22"/>
-    <rect x="530" y="520" width="140" height="110" rx="22"/>
+  <!-- Subtle keyboard row hints (large, low-contrast) -->
+  <g opacity="0.18" fill="#FFFFFF">
+    <rect x="160" y="280" width="160" height="116" rx="26"/>
+    <rect x="344" y="280" width="160" height="116" rx="26"/>
+    <rect x="528" y="280" width="160" height="116" rx="26"/>
+    <rect x="712" y="280" width="160" height="116" rx="26"/>
+
+    <rect x="208" y="426" width="160" height="116" rx="26"/>
+    <rect x="392" y="426" width="160" height="116" rx="26"/>
+    <rect x="576" y="426" width="160" height="116" rx="26"/>
+
+    <rect x="272" y="572" width="160" height="116" rx="26"/>
+    <rect x="456" y="572" width="160" height="116" rx="26"/>
   </g>
-  <rect x="200" y="700" width="624" height="130" rx="40" fill="#ffffff" stroke="#888888" stroke-width="10"/>
-  <path d="M512 640 L472 600 H552 Z" fill="#ffffff"/>
+
+  <!-- Space bar keycap -->
+  <g filter="url(#drop)">
+    <rect x="200" y="700" width="624" height="140" rx="44" fill="#FFFFFF"/>
+    <rect x="200" y="700" width="624" height="140" rx="44" fill="none" stroke="#D0D4DA" stroke-width="10"/>
+    <!-- Gloss highlight -->
+    <path d="M220,720 h584 a24,24 0 0 1 24,24 v8 c-152,22 -480,22 -632,0 v-8 a24,24 0 0 1 24,-24 z" fill="#FFFFFF" opacity="0.55"/>
+  </g>
+
+  <!-- Control glyph (⌃) hovering over space to convey hold=Control -->
+  <g transform="translate(0,-32)" filter="url(#innerShadow)">
+    <!-- stylized caret shaped like control symbol -->
+    <path d="M512 598 L432 518 a28 28 0 0 1 39.6 -39.6 L512 519 l40.4 -40.6 A28 28 0 0 1 592 518 l-80 80 a28 28 0 0 1 -40 0z"
+          fill="url(#accent)"/>
+  </g>
+
+  <!-- Title hint (optional at high res only) -->
+  <g opacity="0.7">
+    <rect x="312" y="874" width="400" height="6" rx="3" fill="#3A404A"/>
+  </g>
 </svg>

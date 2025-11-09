@@ -162,12 +162,14 @@ swift test
 
 ## App Icon
 
-An asset catalog stub (`AppIcon.appiconset`) is included. To generate placeholder icons from an image or SF Symbol:
+The app uses a custom vector icon that visualizes the idea: a highlighted space bar with a Control-style caret hovering above it. The source lives at `assets/space_cadet_icon.svg`.
+
+To regenerate the AppIcon set from the SVG (requires ImageMagick or librsvg):
 
 ```zsh
-./scripts/gen-appicon.sh path/to/source-1024.png
-# or
-./scripts/gen-appicon.sh --symbol keyboard.badge.ellipsis
+make icons
+# or directly
+./scripts/gen-appicon.sh assets/space_cadet_icon.svg
 ```
 
-Images are written into `SpaceCadetApp/SpaceCadetApp/Assets.xcassets/AppIcon.appiconset`. Replace them with your final artwork as desired.
+Outputs are written to `SpaceCadetApp/SpaceCadetApp/Assets.xcassets/AppIcon.appiconset`.

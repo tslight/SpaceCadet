@@ -3,7 +3,7 @@ set -euo pipefail
 
 # Generates macOS AppIcon PNGs from a source image or SF Symbol (via swift symbol rendering).
 # Usage:
-#   ./scripts/gen-appicon.sh source.png
+#   ./scripts/gen-appicon.sh source.png|source.svg
 #   ./scripts/gen-appicon.sh --symbol keyboard.badge.ellipsis
 # Output written into SpaceCadetApp/SpaceCadetApp/Assets.xcassets/AppIcon.appiconset
 # Requires: sips (macOS), Swift (for symbol mode), and ImageMagick 'convert' if you want better resizing quality (optional).
@@ -62,6 +62,20 @@ fi
 if [[ ! -f "$SRC" ]]; then
   echo "Source image not found: $SRC" >&2
   exit 1
+fi
+
+# If source is SVG, rasterize to 1024x1024 PNG first
+if [[ "$SRC" == *.svg ]]; then
+  echo "[gen-appicon] Rasterizing SVG to 1024x1024"
+  if command -v rsvg-convert >/dev/null 2>&1; then
+    rsvg-convert -w 1024 -h 1024 "$SRC" -o /tmp/icon-1024.png
+  elif command -v convert >/dev/null 2>&1; then
+    convert -background none -density 512 "$SRC" -resize 1024x1024 /tmp/icon-1024.png
+  else
+    echo "Please install librsvg (rsvg-convert) or ImageMagick (convert) to rasterize SVG." >&2
+    exit 1
+  fi
+  SRC="/tmp/icon-1024.png"
 fi
 
 mkdir -p "$APPICON_DIR"

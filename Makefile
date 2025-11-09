@@ -32,6 +32,12 @@ lint-analyze:
 		swiftlint analyze --compiler-log-path swiftlint.log || true; \
 	fi
 
+.PHONY: icons
+icons:
+	@echo "Generating AppIcon set from assets/space_cadet_icon.svg"
+	./scripts/gen-appicon.sh assets/space_cadet_icon.svg
+	@echo "Done. See SpaceCadetApp/SpaceCadetApp/Assets.xcassets/AppIcon.appiconset"
+
 build: lint
 	swift build
 
