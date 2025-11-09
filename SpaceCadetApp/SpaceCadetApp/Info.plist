@@ -18,6 +18,8 @@
     <string>0.0.7</string>
     <key>CFBundleVersion</key>
     <string>0.0.7</string>
+    <key>CFBundleIconName</key>
+    <string>AppIcon</string>
     <key>LSUIElement</key>
     <true/>
     <key>NSHumanReadableCopyright</key>
