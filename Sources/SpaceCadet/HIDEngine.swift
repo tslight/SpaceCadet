@@ -55,7 +55,7 @@
             manager = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
             let match: [String: Any] = [
                 kIOHIDDeviceUsagePageKey as String: kHIDPage_GenericDesktop,
-                kIOHIDDeviceUsageKey as String: kHIDUsage_GD_Keyboard,
+                kIOHIDDeviceUsageKey as String: kHIDUsage_GD_Keyboard
             ]
             IOHIDManagerSetDeviceMatching(manager, match as CFDictionary)
 
