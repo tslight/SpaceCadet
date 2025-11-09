@@ -104,31 +104,39 @@ if [[ $IS_STATUSBAR -eq 1 ]]; then
   # Generate status bar icons (small template icons for menu bar)
   echo "[gen-appicon] Generating StatusBar icons..."
   mkdir -p "$STATUSBAR_DIR"
-  
-  # rsvg-convert produces RGBA with white strokes on transparent background
-  # We need to invert so strokes are black (0) on white background (1) for 1-bit template
-  # ImageMagick: invert colors then threshold to 1-bit
+
+  # Create simple white-on-black keyboard icon (will be rendered as template in menu bar)
+  # Using ImageMagick to create a basic keyboard glyph shape
   if command -v convert >/dev/null 2>&1; then
-    # Resize and invert colors (white → black) then threshold to 1-bit
-    convert "$SRC" -resize 32x32 -channel A -separate +channel \
-      \( +clone -negate \) -compose Over -composite -type Bilevel "$STATUSBAR_DIR/StatusBarIcon-32.png"
-    convert "$SRC" -resize 64x64 -channel A -separate +channel \
-      \( +clone -negate \) -compose Over -composite -type Bilevel "$STATUSBAR_DIR/StatusBarIcon-64.png"
+    # 32x32 keyboard icon: white keyboard shape on black background
+    convert -size 32x32 xc:black \
+      -fill white \
+      -draw "roundrectangle 4,8 28,24 2,2" \
+      -draw "line 6,12 26,12" \
+      -pointsize 8 -annotate +12+19 '⌃' \
+      "$STATUSBAR_DIR/StatusBarIcon-32.png"
+
+    # 64x64 keyboard icon (2x scale)
+    convert -size 64x64 xc:black \
+      -fill white \
+      -draw "roundrectangle 8,16 56,48 4,4" \
+      -draw "line 12,24 52,24" \
+      -pointsize 16 -annotate +24+38 '⌃' \
+      "$STATUSBAR_DIR/StatusBarIcon-64.png"
   else
-    # Fallback to sips
-    sips -z 32 32 "$SRC" --out "$STATUSBAR_DIR/StatusBarIcon-32.png" >/dev/null
-    sips -z 64 64 "$SRC" --out "$STATUSBAR_DIR/StatusBarIcon-64.png" >/dev/null
+    echo "ImageMagick (convert) required for status bar icon generation." >&2
+    exit 1
   fi
-  
+
   echo "Generated $STATUSBAR_DIR/StatusBarIcon-32.png"
   echo "Generated $STATUSBAR_DIR/StatusBarIcon-64.png"
-  
+
   # Clean up temp files
   rm -f /tmp/statusbar-base.png /tmp/statusbar-64.png
 else
   # Generate app icons (full color, multiple sizes)
   echo "[gen-appicon] Generating AppIcon..."
-  
+
   for size in "${SIZES[@]}"; do
     OUT="$APPICON_DIR/AppIcon-$size.png"
     # Prefer ImageMagick if present for better scaling
