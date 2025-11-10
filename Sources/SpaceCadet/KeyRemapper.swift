@@ -48,6 +48,7 @@ final class KeyRemapper {
     }
 
     func handle(event: CGEvent) -> CGEvent? {
+        fputs("[KeyRemapper.handle] event type=\(event.type.rawValue)\n", stderr)
         // Pass through synthetic events we created for tap output
         let userData = event.getIntegerValueField(.eventSourceUserData)
         if userData == syntheticUserDataFlag {

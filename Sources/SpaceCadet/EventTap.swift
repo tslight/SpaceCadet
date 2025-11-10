@@ -27,10 +27,13 @@ final class EventTap {
     }
 
     func start() throws {
+        fputs("[EventTap] starting...\n", stderr)
         // Note: kCGHIDEventTap intercepts at the HID level
         let mask =
             (1 << CGEventType.keyDown.rawValue | 1 << CGEventType.keyUp.rawValue | 1
                 << CGEventType.flagsChanged.rawValue)
+
+        fputs("[EventTap] mask = \(mask)\n", stderr)
 
         guard
             let tap = CGEvent.tapCreate(
@@ -39,6 +42,7 @@ final class EventTap {
                 options: .defaultTap,
                 eventsOfInterest: CGEventMask(mask),
                 callback: { _, type, event, refcon in
+                    fputs("[EventTap.callback] fired! type=\(type.rawValue)\n", stderr)
                     guard let refcon = refcon else { return Unmanaged.passUnretained(event) }
                     let mySelf = Unmanaged<EventTap>.fromOpaque(refcon).takeUnretainedValue()
 
@@ -65,17 +69,24 @@ final class EventTap {
                 userInfo: UnsafeMutableRawPointer(Unmanaged.passUnretained(self).toOpaque())
             )
         else {
+            fputs("[EventTap] ERROR: CGEvent.tapCreate failed!\n", stderr)
             throw EventTapError.cannotCreateTap
         }
 
+        fputs("[EventTap] tap created successfully\n", stderr)
+
         guard let rls = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0) else {
+            fputs("[EventTap] ERROR: CFMachPortCreateRunLoopSource failed!\n", stderr)
             throw EventTapError.cannotCreateRunLoopSource
         }
+
+        fputs("[EventTap] run loop source created\n", stderr)
 
         self.tap = tap
         self.runLoopSource = rls
 
         CFRunLoopAddSource(CFRunLoopGetCurrent(), rls, .commonModes)
         CGEvent.tapEnable(tap: tap, enable: true)
+        fputs("[EventTap] enabled tap on main run loop\n", stderr)
     }
 }

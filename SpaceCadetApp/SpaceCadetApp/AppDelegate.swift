@@ -88,8 +88,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func toggleEnabled() {
         enabled.toggle()
+        fputs("[SpaceCadetApp] toggleEnabled called, enabled=\(enabled)\n", stderr)
         menu.items.first?.state = enabled ? .on : .off
-        if enabled { startRemapper() } else { stopRemapper() }
+        if enabled {
+            fputs("[SpaceCadetApp] calling startRemapper from toggle\n", stderr)
+            startRemapper()
+        } else {
+            fputs("[SpaceCadetApp] calling stopRemapper from toggle\n", stderr)
+            stopRemapper()
+        }
     }
 
     @objc private func openPreferences() {
@@ -194,53 +201,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: - Accessibility
     private func requestAccessibilityAndStart() {
-        fputs("[SpaceCadetApp] requestAccessibilityAndStart called\n", stderr)
+        let pid = ProcessInfo.processInfo.processIdentifier
+        let procName = ProcessInfo.processInfo.processName
+        let appIdentifier = Bundle.main.bundleIdentifier ?? "unknown"
+        fputs(
+            "[SpaceCadetApp] PID=\(pid) name=\(procName) bundle=\(appIdentifier)\n",
+            stderr
+        )
 
-        // Check if already granted
-        if AXIsProcessTrustedWithOptions(nil) {
-            fputs("[SpaceCadetApp] accessibility already granted\n", stderr)
-            startRemapper()
-            return
-        }
-
-        // Only show the permission prompt once per installation
-        let promptShown = UserDefaults.standard.bool(forKey: accessibilityPromptShownKey)
-        fputs("[SpaceCadetApp] promptShown=\(promptShown)\n", stderr)
-
-        if !promptShown {
-            // First time - show the permission dialog
-            fputs("[SpaceCadetApp] showing permission dialog for first time\n", stderr)
-            let opts: NSDictionary = [
-                kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true
-            ]
-            _ = AXIsProcessTrustedWithOptions(opts)
-            UserDefaults.standard.set(true, forKey: accessibilityPromptShownKey)
-            fputs("[SpaceCadetApp] accessibility prompt shown and flag set\n", stderr)
-        } else {
-            fputs("[SpaceCadetApp] prompt already shown before, not showing again\n", stderr)
-        }
-
-        // If still not granted, don't start remapper but app continues to run
-        if AXIsProcessTrustedWithOptions(nil) {
-            fputs("[SpaceCadetApp] accessibility now granted after prompt\n", stderr)
-            startRemapper()
-        } else {
-            fputs(
-                "[SpaceCadetApp] accessibility not granted. App running without key " +
-                    "remapping. To enable: System Preferences > Security & Privacy > " +
-                    "Accessibility > Space Cadet\n",
-                stderr
-            )
+        fputs("[SpaceCadetApp] attempting to start remapper...\n", stderr)
+        // For dev builds: just try to start and let EventTap fail if permissions are missing
+        // Add small delay to let accessibility system initialize
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.startRemapper()
         }
     }
 
     // MARK: - Remapper
     private func startRemapper() {
-        fputs("[SpaceCadetApp] startRemapper called\n", stderr)
-        guard tap == nil else {
-            fputs("[SpaceCadetApp] startRemapper: tap already exists, returning\n", stderr)
-            return
-        }
+        guard tap == nil else { return }
         let holdMs = UserDefaults.standard.double(forKey: thresholdKey)
         let effective = holdMs > 0 ? holdMs : defaultHoldMs
         let remapper = KeyRemapper(holdThresholdMs: effective)
