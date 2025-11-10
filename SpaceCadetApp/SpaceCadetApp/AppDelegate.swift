@@ -1,7 +1,8 @@
+
 import AppKit
 import ApplicationServices
-
 import Security
+import SpaceCadet
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem!
@@ -9,7 +10,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private var tap: EventTap?
     private var remapper: KeyRemapper?
-    private let defaultHoldMs: Double = 999.0
+    private let defaultHoldMs: Double = KeyRemapper.defaultHoldMs
     private let thresholdKey = "SpaceCadetHoldMs"
     private var prefsWindow: NSWindow?
     private var loggingEnabled: Bool = true

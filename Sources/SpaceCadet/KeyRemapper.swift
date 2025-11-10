@@ -10,6 +10,7 @@ struct SystemClock: Clock {
 }
 
 final class KeyRemapper {
+    static let defaultHoldMs: Double = 999.0
     private let holdThreshold: TimeInterval  // seconds
     private let clock: Clock
     // Default logging ON; disable by setting SPACE_CADET_LOG=0
@@ -46,7 +47,7 @@ final class KeyRemapper {
     private let kVK_Control: CGKeyCode = 59  // left control
     private let syntheticUserDataFlag: Int64 = 0xFEED  // marker to allow synthetic events to pass through
 
-    init(holdThresholdMs: Double = 999, clock: Clock = SystemClock()) {
+    init(holdThresholdMs: Double = KeyRemapper.defaultHoldMs, clock: Clock = SystemClock()) {
         self.holdThreshold = holdThresholdMs / 1000.0
         self.clock = clock
     }
