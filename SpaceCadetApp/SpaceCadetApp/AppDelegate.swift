@@ -194,26 +194,35 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: - Accessibility
     private func requestAccessibilityAndStart() {
+        fputs("[SpaceCadetApp] requestAccessibilityAndStart called\n", stderr)
+
         // Check if already granted
         if AXIsProcessTrustedWithOptions(nil) {
+            fputs("[SpaceCadetApp] accessibility already granted\n", stderr)
             startRemapper()
             return
         }
 
         // Only show the permission prompt once per installation
         let promptShown = UserDefaults.standard.bool(forKey: accessibilityPromptShownKey)
+        fputs("[SpaceCadetApp] promptShown=\(promptShown)\n", stderr)
+
         if !promptShown {
             // First time - show the permission dialog
+            fputs("[SpaceCadetApp] showing permission dialog for first time\n", stderr)
             let opts: NSDictionary = [
                 kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true
             ]
             _ = AXIsProcessTrustedWithOptions(opts)
             UserDefaults.standard.set(true, forKey: accessibilityPromptShownKey)
-            fputs("[SpaceCadetApp] accessibility prompt shown\n", stderr)
+            fputs("[SpaceCadetApp] accessibility prompt shown and flag set\n", stderr)
+        } else {
+            fputs("[SpaceCadetApp] prompt already shown before, not showing again\n", stderr)
         }
 
         // If still not granted, don't start remapper but app continues to run
         if AXIsProcessTrustedWithOptions(nil) {
+            fputs("[SpaceCadetApp] accessibility now granted after prompt\n", stderr)
             startRemapper()
         } else {
             fputs(
@@ -227,7 +236,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: - Remapper
     private func startRemapper() {
-        guard tap == nil else { return }
+        fputs("[SpaceCadetApp] startRemapper called\n", stderr)
+        guard tap == nil else {
+            fputs("[SpaceCadetApp] startRemapper: tap already exists, returning\n", stderr)
+            return
+        }
         let holdMs = UserDefaults.standard.double(forKey: thresholdKey)
         let effective = holdMs > 0 ? holdMs : defaultHoldMs
         let remapper = KeyRemapper(holdThresholdMs: effective)
