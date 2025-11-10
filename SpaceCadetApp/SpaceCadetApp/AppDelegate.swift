@@ -28,7 +28,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func setupStatusBar() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem.button {
-            button.image = loadStatusBarIcon()
+            let icon = loadStatusBarIcon()
+            // Explicitly set size to prevent scaling
+            icon.size = NSSize(width: 18, height: 18)
+            button.image = icon
             button.toolTip = "Space Cadet"
         }
         let menu = NSMenu()
@@ -66,18 +69,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func loadStatusBarIcon() -> NSImage {
         let bundle = Bundle.main
         if let img = bundle.image(forResource: "StatusBarIcon") {
+            print("DEBUG: Loaded StatusBarIcon from bundle.image(forResource:), size=\(img.size)")
             img.isTemplate = true
             return img
         } else if let img = NSImage(named: "StatusBarIcon") {
+            print("DEBUG: Loaded StatusBarIcon from NSImage(named:), size=\(img.size)")
             img.isTemplate = true
             return img
         } else if #available(macOS 11.0, *) {
+            print("DEBUG: Using fallback SF Symbol keyboard.badge.ellipsis")
             let img = NSImage(
                 systemSymbolName: "keyboard.badge.ellipsis",
                 accessibilityDescription: "Space Cadet") ?? NSImage()
             img.isTemplate = true
             return img
         } else {
+            print("DEBUG: No image found, returning empty NSImage")
             return NSImage()
         }
     }
