@@ -29,7 +29,7 @@ If regenerating icons, use this SVG structure:
 <svg width="32" height="32" viewBox="0 0 32 32">
   <!-- Keyboard outline -->
   <rect x="2" y="6" width="28" height="20" rx="2" stroke="black" stroke-width="1.5"/>
-  
+
   <!-- Key rows -->
   <g stroke="black" stroke-width="1">
     <!-- 3 rows of keys + spacebar -->
