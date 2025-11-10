@@ -27,4 +27,7 @@
     <key>NSPrincipalClass</key>
     <string>NSApplication</string>
 </dict>
+</dict>
+<key>NSInputMonitoringUsageDescription</key>
+<string>Space Cadet needs Input Monitoring permission to reliably intercept keyboard events for remapping.</string>
 </plist>

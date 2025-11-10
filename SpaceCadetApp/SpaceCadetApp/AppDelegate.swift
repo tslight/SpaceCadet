@@ -1,13 +1,15 @@
 import AppKit
 import ApplicationServices
 
+import Security
+
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem!
     private var menu: NSMenu!
 
     private var tap: EventTap?
     private var remapper: KeyRemapper?
-    private let defaultHoldMs: Double = 700.0
+    private let defaultHoldMs: Double = 999.0
     private let thresholdKey = "SpaceCadetHoldMs"
     private var prefsWindow: NSWindow?
     private var loggingEnabled: Bool = true
@@ -15,16 +17,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let launchAtLoginKey = "SpaceCadetLaunchAtLogin"
     private let accessibilityPromptShownKey = "SpaceCadetAccessibilityPromptShown"
 
+    // Timer to periodically check tap health
+    private var tapHealthTimer: Timer?
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         setupStatusBar()
         // Start remapper after a small delay to ensure accessibility system is ready
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             self.requestAccessibilityAndStart()
         }
+
+        // Start tap health monitoring
+        self.startTapHealthMonitor()
     }
 
     func applicationWillTerminate(_ notification: Notification) {
         stopRemapper()
+        tapHealthTimer?.invalidate()
+        tapHealthTimer = nil
     }
 
     // MARK: - Status Bar
@@ -211,10 +221,30 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             fputs(msg, stderr)
         }
 
+        // Check Input Monitoring permission (macOS 10.15+)
+        if #available(macOS 10.15, *) {
+            let hasInputMonitoring = Self.hasInputMonitoringPermission()
+            fputs("[SpaceCadetApp] Input Monitoring permission = \(hasInputMonitoring)\n", stderr)
+            if !hasInputMonitoring {
+                fputs("[SpaceCadetApp] WARNING: Input Monitoring permission not granted!\n", stderr)
+                let msg = "[SpaceCadetApp] Please grant permission in System Settings > Privacy & Security\n"
+                    + "> Input Monitoring\n"
+                fputs(msg, stderr)
+            }
+        }
+
         // Add small delay to let accessibility system initialize
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             self.startRemapper()
         }
+    }
+
+    // Returns true if Input Monitoring permission is granted (macOS 10.15+)
+    static func hasInputMonitoringPermission() -> Bool {
+        if #available(macOS 10.15, *) {
+            return CGPreflightListenEventAccess()
+        }
+        return true // Assume granted on older systems
     }
 
     // MARK: - Remapper
@@ -248,6 +278,26 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         tap = nil
         remapper = nil
         fputs("[SpaceCadetApp] stopped\n", stderr)
+        // Optionally, restart tap health monitor if needed
+    }
+
+    // MARK: - Tap Health Monitoring
+    private func startTapHealthMonitor() {
+        tapHealthTimer?.invalidate()
+        tapHealthTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { [weak self] _ in
+            self?.checkTapHealth()
+        }
+    }
+
+    private func checkTapHealth() {
+        guard let tap = tap else { return }
+        // Use EventTap's isTapEnabled property for robust health check
+        if !tap.isTapEnabled {
+            fputs("[SpaceCadetApp] WARNING: Event tap is disabled! Attempting automatic restart...\n", stderr)
+            let holdMs = UserDefaults.standard.double(forKey: thresholdKey)
+            let effective = holdMs > 0 ? holdMs : defaultHoldMs
+            restartRemapper(with: effective)
+        }
     }
 
     private func restartRemapper(with newHoldMs: Double) {
