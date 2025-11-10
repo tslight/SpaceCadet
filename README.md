@@ -1,6 +1,4 @@
-# Space Cadet ⌨️ 🚀
-
-[![CI](https://github.com/tslight/SpaceCadet/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/tslight/SpaceCadet/actions/workflows/ci.yml)
+[![CI](https://github.com/tslight/SpaceCadet/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/tslight/SpaceCadet/actions/workflows/build.yml)
 [![Release](https://img.shields.io/github/v/tag/tslight/SpaceCadet?label=release)](https://github.com/tslight/SpaceCadet/releases)
 [![Downloads](https://img.shields.io/github/downloads/tslight/SpaceCadet/total)](https://github.com/tslight/SpaceCadet/releases)
 [![License](https://img.shields.io/github/license/tslight/SpaceCadet)](LICENSE)
@@ -8,7 +6,9 @@
 [![Swift](https://img.shields.io/badge/Swift-6.1-orange)](#)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](https://github.com/tslight/SpaceCadet/pulls)
 
-Take **CTRL** of your **SPC**!
+# ⌨️ Space Cadet 🚀
+
+## Take **CTRL** of your **SPC**!
 
 * Press and release space alone inserts a normal space.
 * Hold space alone beyond the threshold (default 700 ms) turns it into Control.
@@ -29,11 +29,11 @@ Space Cadet recifies this horrible, RSI inducing experience and means that the C
 This is especially useful on macOS given that readline/Emacs style bindings work all over the shop.
 
 
-*Couldn't I just do this with Karabiner?*
+**Couldn't I just do this with Karabiner?**
 
 Absolutely. However, I wanted a much more simple app that only did this one thing, and also to learn a bit about macOS development and explore the limits of "vibe" coding in a language I'm not familiar with.
 
-*Why not use a kext like Karabiner?*
+**Why not use a kext like Karabiner?**
 
 Karabiner-Elements uses a kernel extension (kext) for deeper, lower level keyboard remapping, but Apple has deprecated kexts for new apps due to security and stability concerns. New input remappers cannot ship kexts — Apple will not notarize or approve them for general use.
 
