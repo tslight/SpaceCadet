@@ -28,9 +28,16 @@ Space Cadet recifies this horrible, RSI inducing experience and means that the C
 
 This is especially useful on macOS given that readline/Emacs style bindings work all over the shop.
 
+
 *Couldn't I just do this with Karabiner?*
 
 Absolutely. However, I wanted a much more simple app that only did this one thing, and also to learn a bit about macOS development and explore the limits of "vibe" coding in a language I'm not familiar with.
+
+*Why not use a kext like Karabiner?*
+
+Karabiner-Elements uses a kernel extension (kext) for deeper, lower level keyboard remapping, but Apple has deprecated kexts for new apps due to security and stability concerns. New input remappers cannot ship kexts — Apple will not notarize or approve them for general use.
+
+Karabiner is "grandfathered" in because it existed before these rules, but new projects must use user-space APIs (Accessibility, Input Monitoring, HID, etc.), which are less privileged and less robust than kexts. This is why Space Cadet uses only supported, user-space API sadly..
 
 ## Features
 
