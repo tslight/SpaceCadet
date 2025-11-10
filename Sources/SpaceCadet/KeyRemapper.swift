@@ -46,19 +46,20 @@ final class KeyRemapper {
     private let kVK_Control: CGKeyCode = 59  // left control
     private let syntheticUserDataFlag: Int64 = 0xFEED  // marker to allow synthetic events to pass through
 
-    init(holdThresholdMs: Double, clock: Clock = SystemClock()) {
+    init(holdThresholdMs: Double = 999, clock: Clock = SystemClock()) {
         self.holdThreshold = holdThresholdMs / 1000.0
         self.clock = clock
     }
 
     func handle(event: CGEvent) -> CGEvent? {
-        fputs("[KeyRemapper.handle] event type=\(event.type.rawValue)\n", stderr)
+        let type = event.type
+        let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
+        fputs("[KeyRemapper.handle] event type=\(type.rawValue) keyCode=\(keyCode)\n", stderr)
         // Pass through synthetic events we created for tap output
         let userData = event.getIntegerValueField(.eventSourceUserData)
         if userData == syntheticUserDataFlag {
             return event
         }
-        let type = event.type
         switch type {
         case .keyDown:
             return handleKeyDown(event)
@@ -101,6 +102,7 @@ final class KeyRemapper {
 
     private func handleKeyUp(_ event: CGEvent) -> CGEvent? {
         let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
+        log("keyUp received: keyCode=\(keyCode)")
         if keyCode == Int64(kVK_Space) {
             cancelHoldTimer()
             switch state {
@@ -169,15 +171,17 @@ final class KeyRemapper {
         keyDown?.setIntegerValueField(.eventSourceUserData, value: syntheticUserDataFlag)
         let keyUp = CGEvent(keyboardEventSource: src, virtualKey: keyCode, keyDown: false)
         keyUp?.setIntegerValueField(.eventSourceUserData, value: syntheticUserDataFlag)
-        keyDown?.post(tap: .cghidEventTap)
-        keyUp?.post(tap: .cghidEventTap)
+        keyDown?.post(tap: .cgAnnotatedSessionEventTap)
+        keyUp?.post(tap: .cgAnnotatedSessionEventTap)
+        log("synthesized space keyDown/keyUp")
     }
 
     private func synthesizeControlKey(up: Bool) {
         guard let src = CGEventSource(stateID: .hidSystemState) else { return }
         let evt = CGEvent(keyboardEventSource: src, virtualKey: kVK_Control, keyDown: !up)
         evt?.setIntegerValueField(.eventSourceUserData, value: syntheticUserDataFlag)
-        evt?.post(tap: .cghidEventTap)
+        evt?.post(tap: .cgAnnotatedSessionEventTap)
+        log("synthesized control \(up ? "up" : "down")")
     }
 
     private func scheduleHoldTimer(reference: TimeInterval) {

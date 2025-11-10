@@ -7,7 +7,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private var tap: EventTap?
     private var remapper: KeyRemapper?
-    private var enabled: Bool = true
     private let defaultHoldMs: Double = 700.0
     private let thresholdKey = "SpaceCadetHoldMs"
     private var prefsWindow: NSWindow?
@@ -18,7 +17,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         setupStatusBar()
-        requestAccessibilityAndStart()
+        // Start remapper after a small delay to ensure accessibility system is ready
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.requestAccessibilityAndStart()
+        }
     }
 
     func applicationWillTerminate(_ notification: Notification) {
@@ -36,7 +38,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             button.toolTip = "Space Cadet"
         }
         let menu = NSMenu()
-        menu.addItem(withTitle: "Enabled", action: #selector(toggleEnabled), keyEquivalent: "")
         menu.addItem(
             withTitle: "Preferences…", action: #selector(openPreferences), keyEquivalent: "")
         menu.addItem(NSMenuItem.separator())
@@ -55,7 +56,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(withTitle: "Open README", action: #selector(openReadme), keyEquivalent: "")
         menu.addItem(NSMenuItem.separator())
         menu.addItem(withTitle: "Quit Space Cadet", action: #selector(quit), keyEquivalent: "")
-        menu.items.first?.state = .on
+        // Don't set state yet - wait until remapper actually starts
+        // menu.items.first?.state = .on
         // Reflect launch-at-login state (from manager; fallback to persisted preference)
         if let launchItem = menu.items.first(where: { $0.title == "Launch at Login" }) {
             let persisted = UserDefaults.standard.bool(forKey: launchAtLoginKey)
@@ -83,19 +85,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return img
         } else {
             return NSImage()
-        }
-    }
-
-    @objc private func toggleEnabled() {
-        enabled.toggle()
-        fputs("[SpaceCadetApp] toggleEnabled called, enabled=\(enabled)\n", stderr)
-        menu.items.first?.state = enabled ? .on : .off
-        if enabled {
-            fputs("[SpaceCadetApp] calling startRemapper from toggle\n", stderr)
-            startRemapper()
-        } else {
-            fputs("[SpaceCadetApp] calling stopRemapper from toggle\n", stderr)
-            stopRemapper()
         }
     }
 
@@ -210,7 +199,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
 
         fputs("[SpaceCadetApp] attempting to start remapper...\n", stderr)
-        // For dev builds: just try to start and let EventTap fail if permissions are missing
+
+        // Check accessibility permission explicitly
+        let trusted = AXIsProcessTrusted()
+        fputs("[SpaceCadetApp] AXIsProcessTrusted = \(trusted)\n", stderr)
+
+        if !trusted {
+            fputs("[SpaceCadetApp] WARNING: Accessibility permission not granted!\n", stderr)
+            let msg = "[SpaceCadetApp] Please grant permission in System Settings "
+                + "> Privacy & Security > Accessibility\n"
+            fputs(msg, stderr)
+        }
+
         // Add small delay to let accessibility system initialize
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             self.startRemapper()
@@ -219,7 +219,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: - Remapper
     private func startRemapper() {
-        guard tap == nil else { return }
+        // If already running, don't start again
+        if tap != nil {
+            fputs("[SpaceCadetApp] remapper already running, ignoring start request\n", stderr)
+            return
+        }
+
         let holdMs = UserDefaults.standard.double(forKey: thresholdKey)
         let effective = holdMs > 0 ? holdMs : defaultHoldMs
         let remapper = KeyRemapper(holdThresholdMs: effective)
@@ -233,6 +238,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             updateThresholdMenuTitle(effective)
         } catch {
             fputs("[SpaceCadetApp] failed to start event tap: \(error)\n", stderr)
+            self.tap = nil
+            self.remapper = nil
         }
     }
 
