@@ -46,25 +46,34 @@ final class EventTap {
                     guard let refcon = refcon else { return Unmanaged.passUnretained(event) }
                     let mySelf = Unmanaged<EventTap>.fromOpaque(refcon).takeUnretainedValue()
 
-                    // Re-enable tap if disabled by timeout
+                    // Re-enable tap if disabled by timeout or user input
                     if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
+                        fputs("[EventTap.callback] tap was disabled! Attempting recovery...\n", stderr)
                         if let liveTap = mySelf.tap {
                             CGEvent.tapEnable(tap: liveTap, enable: true)
+                            fputs("[EventTap.callback] tap re-enabled\n", stderr)
                         }
                         return Unmanaged.passUnretained(event)
                     }
 
-                    if let returned = mySelf.handler(event) {
-                        // If the handler returns the original event, don't retain it; if it
-                        // returns a newly created CGEvent, we must return a retained reference
-                        // so the system owns it for delivery.
-                        if returned === event {
-                            return Unmanaged.passUnretained(returned)
-                        } else {
-                            return Unmanaged.passRetained(returned)
+                    // Handle actual key events
+                    if type == .keyDown || type == .keyUp || type == .flagsChanged {
+                        fputs("[EventTap.callback] processing key event type=\(type.rawValue)\n", stderr)
+                        if let returned = mySelf.handler(event) {
+                            // If the handler returns the original event, don't retain it; if it
+                            // returns a newly created CGEvent, we must return a retained reference
+                            // so the system owns it for delivery.
+                            if returned === event {
+                                return Unmanaged.passUnretained(returned)
+                            } else {
+                                return Unmanaged.passRetained(returned)
+                            }
                         }
+                        return nil
                     }
-                    return nil
+
+                    // For any other event type, pass through
+                    return Unmanaged.passUnretained(event)
                 },
                 userInfo: UnsafeMutableRawPointer(Unmanaged.passUnretained(self).toOpaque())
             )

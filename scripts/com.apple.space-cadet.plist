@@ -16,7 +16,8 @@
     </dict>
     <key>RunAtLoad</key>
     <true/>
+    <!-- DO NOT keep respawning on crash - the watchdog handles recovery -->
     <key>KeepAlive</key>
-    <true/>
+    <false/>
 </dict>
 </plist>

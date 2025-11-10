@@ -37,6 +37,10 @@ final class KeyRemapper {
     private(set) var adaptiveCount: Int = 0
     private let graceWindow: TimeInterval = 0.015  // 15ms grace to avoid borderline misclassifications
 
+    // Watchdog timer: if we stay in a non-idle state too long, something's wrong
+    private var watchdogTimer: DispatchSourceTimer?
+    private let watchdogTimeout: TimeInterval = 30.0  // 30 seconds
+
     // KeyCodes: macOS virtual key codes
     private let kVK_Space: CGKeyCode = 49
     private let kVK_Control: CGKeyCode = 59  // left control
@@ -75,6 +79,7 @@ final class KeyRemapper {
             let now = clock.now()
             state = .pendingTap(downAt: now)
             scheduleHoldTimer(reference: now)
+            scheduleWatchdogTimer()
             lastSpaceDown = now
             log("space down (pendingTap)")
             return nil  // swallow original space down
@@ -82,6 +87,7 @@ final class KeyRemapper {
             switch state {
             case .pendingTap(let downAt):
                 // Any key pressed while space is held triggers immediate control
+                log("chord detected: transitioning to control")
                 cancelHoldTimer()
                 transitionToControlIfNeeded(downAt: downAt)
                 return eventWithControl(from: event)
@@ -115,6 +121,7 @@ final class KeyRemapper {
             state = .idle
             controlEngaged = false
             cancelSafetyResetTimer()
+            cancelWatchdogTimer()
             return nil
         } else {
             // While holding control via space, also repost keyUp with control to keep phases consistent
@@ -226,6 +233,32 @@ final class KeyRemapper {
     private func cancelSafetyResetTimer() {
         safetyResetTimer?.cancel()
         safetyResetTimer = nil
+    }
+
+    private func scheduleWatchdogTimer() {
+        cancelWatchdogTimer()
+        let timer = DispatchSource.makeTimerSource(queue: .main)
+        timer.schedule(deadline: .now() + watchdogTimeout)
+        timer.setEventHandler { [weak self] in
+            guard let self = self else { return }
+            if case .pendingTap = self.state {
+                self.log("WATCHDOG: stuck in pendingTap for \(self.watchdogTimeout)s, resetting")
+                self.state = .idle
+                self.controlEngaged = false
+            } else if case .holdingControl = self.state {
+                self.log("WATCHDOG: stuck in holdingControl for \(self.watchdogTimeout)s, releasing control")
+                if self.controlEngaged { self.synthesizeControlKey(up: true) }
+                self.state = .idle
+                self.controlEngaged = false
+            }
+        }
+        watchdogTimer = timer
+        timer.resume()
+    }
+
+    private func cancelWatchdogTimer() {
+        watchdogTimer?.cancel()
+        watchdogTimer = nil
     }
 
     private var loggingEnabled: Bool = true

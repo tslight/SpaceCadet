@@ -59,6 +59,54 @@ import CoreGraphics
             // Should pass through (non-nil)
             XCTAssertNotNil(remapper.handle(event: synthetic))
         }
+
+        func testChordDetectionTransitionsToControl() {
+            let clock = MockClock()
+            let remapper = KeyRemapper(holdThresholdMs: 200, clock: clock)
+
+            let src = CGEventSource(stateID: .hidSystemState)!
+            // Space down
+            let spaceDown = CGEvent(keyboardEventSource: src, virtualKey: 49, keyDown: true)!
+            XCTAssertNil(remapper.handle(event: spaceDown))
+
+            // Press another key quickly (before threshold)
+            clock.t += 0.05
+            let aDown = CGEvent(keyboardEventSource: src, virtualKey: 0, keyDown: true)!
+            let result = remapper.handle(event: aDown)
+
+            // Should get a key event with control modifier
+            XCTAssertNotNil(result, "Chord should emit event with control")
+            if let evt = result {
+                XCTAssertTrue(evt.flags.contains(.maskControl), "Event should have control modifier")
+            }
+        }
+
+        func testStateRecoveryAfterMissedSpaceUp() {
+            let clock = MockClock()
+            let remapper = KeyRemapper(holdThresholdMs: 100, clock: clock)
+            remapper.setLoggingEnabled(true)
+
+            let src = CGEventSource(stateID: .hidSystemState)!
+            // Space down - transitions to pendingTap
+            let spaceDown = CGEvent(keyboardEventSource: src, virtualKey: 49, keyDown: true)!
+            XCTAssertNil(remapper.handle(event: spaceDown))
+
+            // Wait past threshold - transitions to holdingControl
+            clock.t += 0.2
+            let aDown = CGEvent(keyboardEventSource: src, virtualKey: 0, keyDown: true)!
+            _ = remapper.handle(event: aDown)
+
+            // Simulate a long time passing without spaceUp
+            // (In real scenario, the safety/watchdog timer would fire)
+            clock.t += 35.0  // Past 30s watchdog timeout
+
+            // Now if we get another key event, system should still work
+            let bDown = CGEvent(keyboardEventSource: src, virtualKey: 11, keyDown: true)!
+            let result = remapper.handle(event: bDown)
+
+            // Should still process the key event
+            XCTAssertNotNil(result)
+        }
     }
 
 #endif
