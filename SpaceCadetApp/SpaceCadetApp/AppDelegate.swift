@@ -14,8 +14,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var loggingEnabled: Bool = true
     private var adaptiveUpdateTimer: Timer?
     private let launchAtLoginKey = "SpaceCadetLaunchAtLogin"
-    private var accessibilityPromptCount: Int = 0
-    private let maxAccessibilityPrompts: Int = 5
+    private let accessibilityPromptShownKey = "SpaceCadetAccessibilityPromptShown"
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         setupStatusBar()
@@ -195,30 +194,38 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: - Accessibility
     private func requestAccessibilityAndStart() {
-        // Only show the accessibility prompt once (max 5 attempts to catch timing issues)
-        let opts: NSDictionary = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true]
-        
-        if AXIsProcessTrustedWithOptions(opts) {
-            // Access granted - start the remapper
-            accessibilityPromptCount = 0
+        // Check if already granted
+        if AXIsProcessTrustedWithOptions(nil) {
             startRemapper()
-        } else if accessibilityPromptCount < maxAccessibilityPrompts {
-            // Still denied - poll at increasing intervals to avoid excessive dialog spawning
-            accessibilityPromptCount += 1
-            let delay = min(Double(accessibilityPromptCount), 10.0)  // Back off up to 10 seconds
-            let msg = "accessibility denied, will retry in \(Int(delay))s "
-            let attempt = "(attempt \(accessibilityPromptCount)/\(maxAccessibilityPrompts))"
-            fputs("[SpaceCadetApp] \(msg)\(attempt)\n", stderr)
-            DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
-                self?.requestAccessibilityAndStart()
-            }
-        } else {
-            // Max retries exceeded - stop polling
-            let msg = "accessibility permission not granted after \(maxAccessibilityPrompts) "
-            let hint = "attempts. Manual grant required via System Prefs > Security & Privacy."
-            fputs("[SpaceCadetApp] \(msg)\(hint)\n", stderr)
+            return
         }
-    }    // MARK: - Remapper
+
+        // Only show the permission prompt once per installation
+        let promptShown = UserDefaults.standard.bool(forKey: accessibilityPromptShownKey)
+        if !promptShown {
+            // First time - show the permission dialog
+            let opts: NSDictionary = [
+                kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true
+            ]
+            _ = AXIsProcessTrustedWithOptions(opts)
+            UserDefaults.standard.set(true, forKey: accessibilityPromptShownKey)
+            fputs("[SpaceCadetApp] accessibility prompt shown\n", stderr)
+        }
+
+        // If still not granted, don't start remapper but app continues to run
+        if AXIsProcessTrustedWithOptions(nil) {
+            startRemapper()
+        } else {
+            fputs(
+                "[SpaceCadetApp] accessibility not granted. App running without key " +
+                    "remapping. To enable: System Preferences > Security & Privacy > " +
+                    "Accessibility > Space Cadet\n",
+                stderr
+            )
+        }
+    }
+
+    // MARK: - Remapper
     private func startRemapper() {
         guard tap == nil else { return }
         let holdMs = UserDefaults.standard.double(forKey: thresholdKey)
