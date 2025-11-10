@@ -14,6 +14,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var loggingEnabled: Bool = true
     private var adaptiveUpdateTimer: Timer?
     private let launchAtLoginKey = "SpaceCadetLaunchAtLogin"
+    private var accessibilityPromptCount: Int = 0
+    private let maxAccessibilityPrompts: Int = 5
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         setupStatusBar()
@@ -69,22 +71,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func loadStatusBarIcon() -> NSImage {
         let bundle = Bundle.main
         if let img = bundle.image(forResource: "StatusBarIcon") {
-            print("DEBUG: Loaded StatusBarIcon from bundle.image(forResource:), size=\(img.size)")
             img.isTemplate = true
             return img
         } else if let img = NSImage(named: "StatusBarIcon") {
-            print("DEBUG: Loaded StatusBarIcon from NSImage(named:), size=\(img.size)")
             img.isTemplate = true
             return img
         } else if #available(macOS 11.0, *) {
-            print("DEBUG: Using fallback SF Symbol keyboard.badge.ellipsis")
             let img = NSImage(
                 systemSymbolName: "keyboard.badge.ellipsis",
                 accessibilityDescription: "Space Cadet") ?? NSImage()
             img.isTemplate = true
             return img
         } else {
-            print("DEBUG: No image found, returning empty NSImage")
             return NSImage()
         }
     }
@@ -197,18 +195,30 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: - Accessibility
     private func requestAccessibilityAndStart() {
+        // Only show the accessibility prompt once (max 5 attempts to catch timing issues)
         let opts: NSDictionary = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true]
+        
         if AXIsProcessTrustedWithOptions(opts) {
+            // Access granted - start the remapper
+            accessibilityPromptCount = 0
             startRemapper()
-        } else {
-            // Poll briefly until granted
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+        } else if accessibilityPromptCount < maxAccessibilityPrompts {
+            // Still denied - poll at increasing intervals to avoid excessive dialog spawning
+            accessibilityPromptCount += 1
+            let delay = min(Double(accessibilityPromptCount), 10.0)  // Back off up to 10 seconds
+            let msg = "accessibility denied, will retry in \(Int(delay))s "
+            let attempt = "(attempt \(accessibilityPromptCount)/\(maxAccessibilityPrompts))"
+            fputs("[SpaceCadetApp] \(msg)\(attempt)\n", stderr)
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
                 self?.requestAccessibilityAndStart()
             }
+        } else {
+            // Max retries exceeded - stop polling
+            let msg = "accessibility permission not granted after \(maxAccessibilityPrompts) "
+            let hint = "attempts. Manual grant required via System Prefs > Security & Privacy."
+            fputs("[SpaceCadetApp] \(msg)\(hint)\n", stderr)
         }
-    }
-
-    // MARK: - Remapper
+    }    // MARK: - Remapper
     private func startRemapper() {
         guard tap == nil else { return }
         let holdMs = UserDefaults.standard.double(forKey: thresholdKey)
