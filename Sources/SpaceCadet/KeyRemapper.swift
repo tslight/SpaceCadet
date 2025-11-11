@@ -1,11 +1,9 @@
 import CoreGraphics
 import Foundation
 
-
 public protocol Clock {
     func now() -> TimeInterval  // seconds
 }
-
 
 public struct SystemClock: Clock {
     public init() {}
