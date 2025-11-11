@@ -41,9 +41,13 @@ Karabiner is "grandfathered" in because it existed before these rules, but new p
 
 **N.B. I HAVE CURRENTLY PUT THIS PROJECT ON HIATUS!**
 
-After arguing with Copilot for over 24 hours about this project it turns out it is not yet possible to "vibe" code in a language/ecosystem I'm already familiar with/can already write pretty well in! Not sure if it's a limitation of AI or just how clunky macOS development appears to be and how locked down the ecosystem is. Sadly I'm not willing to pay £78 for the developer signing crap yet....
+After arguing with Copilot for over 24 hours about this project it turns out it is not yet possible to "vibe" code in a language/ecosystem I'm not familiar with/can already write pretty well in!
+
+Not sure if it's a limitation of AI or just how clunky macOS development appears to be and how locked down the ecosystem is. Sadly I'm not willing to pay £78 for the developer signing crap yet....
 
 I do highly recommend Karabiner if you need this feature though - there's a complex modification on the website that does exactly this and it works far better than my hacky attempt!
+
+I'll happily accept PRs though if anyone with actual macOS development experience wants to pick up the torch.
 
 ## Features
 
