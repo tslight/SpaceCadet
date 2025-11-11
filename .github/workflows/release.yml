@@ -1,14 +1,22 @@
 name: release
 
+
 on:
-  push:
-    branches: [main, master]
+
+name: release
+
+on:
+  workflow_run:
+    workflows: ["build"]
+    types:
+      - completed
 
 permissions:
   contents: write
 
 jobs:
   release:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: macos-latest
     steps:
       - name: Checkout
@@ -35,7 +43,9 @@ jobs:
 
       - name: Build App (Release)
         run: |
-          xcodebuild -project SpaceCadetApp/SpaceCadetApp.xcodeproj -scheme SpaceCadetApp -configuration Release -derivedDataPath build-app
+          swift build --product SpaceCadetApp -c release
+          mkdir -p build-app/Build/Products/Release
+          cp -R .build/release/SpaceCadetApp.app build-app/Build/Products/Release/
 
       - name: Package App Bundle (ZIP & DMG)
         run: |

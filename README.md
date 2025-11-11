@@ -57,25 +57,31 @@ Karabiner is "grandfathered" in because it existed before these rules, but new p
 
 ### Build
 
-To build the background status bar app in Xcode:
 
-1. Open `SpaceCadetApp/SpaceCadetApp.xcodeproj` in Xcode.
-2. Select the `SpaceCadetApp` scheme and hit Run (⌘R).
-3. A status bar item (keyboard icon on macOS 11+, or ⌃␣ on older macOS) will appear. Menu items include:
-	- Enabled/Disabled
-	- Preferences… (hold threshold slider; applied immediately)
-	- Launch at Login (toggle)
-	- Restart Event Tap
-	- Toggle Logging (enable/disable verbose logs)
-	- Suggest Threshold (based on adaptive average)
-	- Open README
-	- Quit
+### Build & Run (SwiftPM)
+
+To build and run the background status bar app using Swift Package Manager:
+
+```zsh
+swift build --product SpaceCadetApp -c release
+swift run SpaceCadetApp
+```
+
+This will launch the app as a background process with a status bar icon. Menu items include:
+
+- Enabled/Disabled
+- Preferences… (hold threshold slider; applied immediately)
+- Launch at Login (toggle)
+- Restart Event Tap
+- Toggle Logging (enable/disable verbose logs)
+- Suggest Threshold (based on adaptive average)
+- Open README
+- Quit
 
 Notes:
 
 * The app requests Accessibility permission.
 * The app runs as a background accessory (no dock icon), controlled from the status bar.
-* Build requires full Xcode (not just Command Line Tools).
 * Preferences… lets you adjust the hold threshold (150–800 ms). Saved in `UserDefaults` and applied immediately.
 * Adaptive average tap time (shown in app logs) can guide choosing a threshold (menu action “Suggest Threshold”).
 * Toggle Logging enables/disables verbose logs without restarting.
@@ -116,13 +122,14 @@ Use Preferences in the app to set your hold threshold (default 700 ms). Guidance
 
 
 
-### Building the App Bundle (Xcode)
 
-To catch target drift (files not added to the Xcode project), build the app bundle via Makefile:
+### Building the App Bundle (SwiftPM)
+
+To build the app bundle for distribution:
 
 ```zsh
-make app-build
-open build-app/Build/Products/Release/"Space Cadet.app"
+swift build --product SpaceCadetApp -c release
+open .build/release/SpaceCadetApp.app
 ```
 
 CI also runs this build so missing source files trigger failures early.

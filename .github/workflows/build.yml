@@ -51,6 +51,8 @@ jobs:
         run: swift test -v || true # tests are currently minimal
       - name: Regenerate app icons
         run: bash scripts/gen-appicon.sh assets/space_cadet_icon.svg
-      - name: Build SpaceCadetApp (Xcode Release)
+      - name: Build SpaceCadetApp (SwiftPM Release)
         run: |
-          xcodebuild -project SpaceCadetApp/SpaceCadetApp.xcodeproj -scheme SpaceCadetApp -configuration Release -derivedDataPath build-app
+          swift build --product SpaceCadetApp -c release
+          mkdir -p build-app/Build/Products/Release
+          cp -R .build/release/SpaceCadetApp.app build-app/Build/Products/Release/
