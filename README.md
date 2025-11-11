@@ -39,6 +39,12 @@ Karabiner-Elements uses a kernel extension (kext) for deeper, lower level keyboa
 
 Karabiner is "grandfathered" in because it existed before these rules, but new projects must use user-space APIs (Accessibility, Input Monitoring, HID, etc.), which are less privileged and less robust than kexts. This is why Space Cadet uses only supported, user-space API sadly..
 
+**N.B. I HAVE CURRENTLY PUT THIS PROJECT ON HIATUS!**
+
+After arguing with Copilot for over 24 hours about this project it turns out it is not yet possible to "vibe" code in a language/ecosystem I'm already familiar with/can already write pretty well in! Not sure if it's a limitation of AI or just how clunky macOS development appears to be and how locked down the ecosystem is. Sadly I'm not willing to pay £78 for the developer signing crap yet....
+
+I do highly recommend Karabiner if you need this feature though - there's a complex modification on the website that does exactly this and it works far better than my hacky attempt!
+
 ## Features
 
 * Pure Swift, uses `CGEventTap` (requires Accessibility permission).
