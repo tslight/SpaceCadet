@@ -70,5 +70,10 @@ install-agent: release
 	launchctl unload $(LAUNCHAGENT_DIR)/$(PLIST) 2>/dev/null || true
 	launchctl load $(LAUNCHAGENT_DIR)/$(PLIST)
 
-unload-agent:
+	unload-agent:
 	launchctl unload $(LAUNCHAGENT_DIR)/$(PLIST)
+
+.PHONY: clean
+clean:
+	rm -rf .build build-app SpaceCadetApp/build SpaceCadetApp/SpaceCadetApp/build SpaceCadetApp/SpaceCadetApp/DerivedData
+	echo "Cleaned build artifacts."
