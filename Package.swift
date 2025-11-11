@@ -26,7 +26,11 @@ let package = Package(
         .executableTarget(
             name: "SpaceCadetApp",
             dependencies: ["SpaceCadet"],
-            path: "SpaceCadetApp/SpaceCadetApp"
+            path: "SpaceCadetApp/SpaceCadetApp",
+            resources: [
+                .process("Info.plist"),
+                .process("Assets.xcassets")
+            ]
         ),
         .testTarget(
             name: "SpaceCadetTests",
