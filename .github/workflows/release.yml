@@ -1,16 +1,9 @@
 name: release
-
-
-on:
-
-name: release
-
 on:
   workflow_run:
     workflows: ["build"]
     types:
       - completed
-
 permissions:
   contents: write
 
