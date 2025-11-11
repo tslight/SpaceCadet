@@ -28,7 +28,6 @@ let package = Package(
             dependencies: ["SpaceCadet"],
             path: "SpaceCadetApp/SpaceCadetApp",
             resources: [
-                .process("Info.plist"),
                 .process("Assets.xcassets")
             ]
         ),
