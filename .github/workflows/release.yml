@@ -34,11 +34,10 @@ jobs:
         run: |
           swift build -v
 
-      - name: Build App (Release)
+      - name: Build and Package App Bundle (SwiftPM Release)
         run: |
           swift build --product SpaceCadetApp -c release
-          mkdir -p build-app/Build/Products/Release
-          cp -R .build/release/SpaceCadetApp.app build-app/Build/Products/Release/
+          bash scripts/package-app.sh release
 
       - name: Package App Bundle (ZIP & DMG)
         run: |
