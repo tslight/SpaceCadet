@@ -26,7 +26,6 @@
     <string>Copyright © 2025</string>
     <key>NSPrincipalClass</key>
     <string>NSApplication</string>
-</dict>
     <key>NSInputMonitoringUsageDescription</key>
     <string>Space Cadet needs Input Monitoring permission to reliably intercept keyboard events for remapping.</string>
 </dict>

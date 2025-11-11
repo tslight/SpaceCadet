@@ -1,20 +1,23 @@
 import CoreGraphics
 import Foundation
 
-protocol Clock {
+
+public protocol Clock {
     func now() -> TimeInterval  // seconds
 }
 
-struct SystemClock: Clock {
-    func now() -> TimeInterval { ProcessInfo.processInfo.systemUptime }  // monotonic
+
+public struct SystemClock: Clock {
+    public init() {}
+    public func now() -> TimeInterval { ProcessInfo.processInfo.systemUptime }  // monotonic
 }
 
-final class KeyRemapper {
-    static let defaultHoldMs: Double = 999.0
+public final class KeyRemapper {
+    public static let defaultHoldMs: Double = 999.0
     private let holdThreshold: TimeInterval  // seconds
     private let clock: Clock
     // Default logging ON; disable by setting SPACE_CADET_LOG=0
-    // Logging always enabled for verbose CLI output
+    // Logging always enabled for verbose output
     // Fixed small early-chord window: if another key is pressed quickly after space, treat as chord
     private let earlyChordWindow: TimeInterval = 0.06  // 60ms
 
@@ -34,8 +37,8 @@ final class KeyRemapper {
     // Timer for hold threshold
     private var holdTimer: DispatchSourceTimer?
     private var lastSpaceDown: TimeInterval = 0
-    private(set) var adaptiveAvgTap: TimeInterval = 0.0
-    private(set) var adaptiveCount: Int = 0
+    public private(set) var adaptiveAvgTap: TimeInterval = 0.0
+    public private(set) var adaptiveCount: Int = 0
     private let graceWindow: TimeInterval = 0.015  // 15ms grace to avoid borderline misclassifications
 
     // Watchdog timer: if we stay in a non-idle state too long, something's wrong
@@ -47,12 +50,12 @@ final class KeyRemapper {
     private let kVK_Control: CGKeyCode = 59  // left control
     private let syntheticUserDataFlag: Int64 = 0xFEED  // marker to allow synthetic events to pass through
 
-    init(holdThresholdMs: Double = KeyRemapper.defaultHoldMs, clock: Clock = SystemClock()) {
+    public init(holdThresholdMs: Double = KeyRemapper.defaultHoldMs, clock: Clock) {
         self.holdThreshold = holdThresholdMs / 1000.0
         self.clock = clock
     }
 
-    func handle(event: CGEvent) -> CGEvent? {
+    public func handle(event: CGEvent) -> CGEvent? {
         let type = event.type
         let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
         fputs("[KeyRemapper.handle] event type=\(type.rawValue) keyCode=\(keyCode)\n", stderr)
@@ -267,7 +270,7 @@ final class KeyRemapper {
     }
 
     private var loggingEnabled: Bool = true
-    func setLoggingEnabled(_ enabled: Bool) { loggingEnabled = enabled }
+    public func setLoggingEnabled(_ enabled: Bool) { loggingEnabled = enabled }
     private func log(_ msg: String) {
         guard loggingEnabled else { return }
         fputs("[SpaceCadet] \(msg)\n", stderr)

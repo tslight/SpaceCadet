@@ -1,31 +1,37 @@
 // swift-tools-version:5.9
 import PackageDescription
-
 let package = Package(
     name: "space-cadet",
     platforms: [
         .macOS(.v12)
     ],
     products: [
-        .executable(name: "SpaceCadet", targets: ["SpaceCadet"])
+        .library(name: "SpaceCadet", targets: ["SpaceCadet"]),
+        .executable(name: "SpaceCadetApp", targets: ["SpaceCadetApp"])
     ],
     targets: [
-        .executableTarget(
+        .target(
             name: "SpaceCadet",
             path: "Sources/SpaceCadet",
             swiftSettings: [
                 .define("HID_ENGINE_EXPERIMENTAL"),
-                .unsafeFlags(["-warnings-as-errors"], .when(configuration: .release)),
+                .unsafeFlags(["-warnings-as-errors"], .when(configuration: .release))
             ],
             linkerSettings: [
                 .linkedFramework("IOKit"),
-                .linkedFramework("CoreFoundation"),
+                .linkedFramework("CoreFoundation")
             ]
+        ),
+        // SpaceCadetCLI target removed
+        .executableTarget(
+            name: "SpaceCadetApp",
+            dependencies: ["SpaceCadet"],
+            path: "SpaceCadetApp/SpaceCadetApp"
         ),
         .testTarget(
             name: "SpaceCadetTests",
             dependencies: ["SpaceCadet"],
             path: "Tests/SpaceCadetTests"
-        ),
+        )
     ]
 )

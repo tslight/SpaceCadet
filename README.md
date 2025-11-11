@@ -73,11 +73,11 @@ To build the background status bar app in Xcode:
 
 Notes:
 
-* The app requests Accessibility permission just like the CLI.
+* The app requests Accessibility permission.
 * The app runs as a background accessory (no dock icon), controlled from the status bar.
 * Build requires full Xcode (not just Command Line Tools).
 * Preferences… lets you adjust the hold threshold (150–800 ms). Saved in `UserDefaults` and applied immediately.
-* Adaptive average tap time (shown in CLI/App logs) can guide choosing a threshold (menu action “Suggest Threshold”).
+* Adaptive average tap time (shown in app logs) can guide choosing a threshold (menu action “Suggest Threshold”).
 * Toggle Logging enables/disables verbose logs without restarting.
 * “Restart Event Tap” menu item can recover if macOS disables the tap.
 
@@ -114,19 +114,7 @@ Use Preferences in the app to set your hold threshold (default 700 ms). Guidance
 
 ## Development
 
-CLI build & run (for development/testing):
 
-```zsh
-swift build
-swift run SpaceCadet
-```
-
-Release build:
-
-```zsh
-swift build -c release
-./.build/release/SpaceCadet
-```
 
 ### Building the App Bundle (Xcode)
 
@@ -149,27 +137,9 @@ make lint-fix   # runs swiftlint --fix (no trailing commas, closure params inlin
 
 An optional `.swift-format.json` is included for editors; ensure it does not reintroduce trailing commas. Disable conflicting "format on save" settings or align them with SwiftLint.
 
-Adjust threshold when running CLI via env var:
 
-```zsh
-SPACE_CADET_HOLD_MS=300 swift run SpaceCadet   # faster
-SPACE_CADET_HOLD_MS=900 swift run SpaceCadet   # slower
-```
 
-### CLI LaunchAgent (optional)
 
-For the CLI-only binary you can still use a LaunchAgent. Edit the template at `scripts/com.apple.space-cadet.plist` if needed, then:
-
-```zsh
-make release
-make install-agent
-```
-
-Unload later:
-
-```zsh
-make unload-agent
-```
 
 ## Troubleshooting
 

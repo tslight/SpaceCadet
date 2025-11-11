@@ -1,12 +1,12 @@
 import CoreGraphics
 import Foundation
 
-enum EventTapError: Error, CustomStringConvertible {
+public enum EventTapError: Error, CustomStringConvertible {
     case cannotCreateTap
     case cannotCreateRunLoopSource
     case accessibilityMissing
 
-    var description: String {
+    public var description: String {
         switch self {
         case .cannotCreateTap: return "Unable to create CGEventTap."
         case .cannotCreateRunLoopSource: return "Unable to create CFMachPort run loop source."
@@ -15,8 +15,8 @@ enum EventTapError: Error, CustomStringConvertible {
     }
 }
 
-final class EventTap {
-    typealias Handler = (CGEvent) -> CGEvent?
+public final class EventTap {
+    public typealias Handler = (CGEvent) -> CGEvent?
 
     private let handler: Handler
     private var tap: CFMachPort?
@@ -31,11 +31,11 @@ final class EventTap {
         return CGEvent.tapIsEnabled(tap: tap)
     }
 
-    init(remapHandler: @escaping Handler) {
+    public init(remapHandler: @escaping Handler) {
         self.handler = remapHandler
     }
 
-    func start() throws {
+    public func start() throws {
         fputs("[EventTap] starting...\n", stderr)
         // Note: kCGHIDEventTap intercepts at the HID level
         let mask =

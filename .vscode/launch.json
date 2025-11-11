@@ -19,6 +19,26 @@
             "target": "SpaceCadet",
             "configuration": "release",
             "preLaunchTask": "swift: Build Release SpaceCadet"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:space-cadet}",
+            "name": "Debug SpaceCadetApp",
+            "target": "SpaceCadetApp",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug SpaceCadetApp"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:space-cadet}",
+            "name": "Release SpaceCadetApp",
+            "target": "SpaceCadetApp",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release SpaceCadetApp"
         }
     ]
 }
