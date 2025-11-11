@@ -5,7 +5,7 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleExecutable</key>
-    <string>Space Cadet</string>
+    <string>SpaceCadetApp</string>
     <key>CFBundleIdentifier</key>
     <string>com.tslight.SpaceCadet</string>
     <key>CFBundleInfoDictionaryVersion</key>

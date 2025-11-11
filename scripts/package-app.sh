@@ -30,6 +30,14 @@ cp "${EXECUTABLE}" "${APP_BUNDLE}/Contents/MacOS/${PRODUCT_NAME}"
 # Copy Info.plist
 cp "${PLIST}" "${APP_BUNDLE}/Contents/Info.plist"
 
+# Validate Info.plist CFBundleExecutable matches actual executable name
+PLIST_EXECUTABLE=$(plutil -extract CFBundleExecutable xml1 -o - "${APP_BUNDLE}/Contents/Info.plist" | grep '<string>' | sed -E 's/.*<string>(.*)<\/string>.*/\1/')
+ACTUAL_EXECUTABLE=$(basename "${EXECUTABLE}")
+if [ "$PLIST_EXECUTABLE" != "$ACTUAL_EXECUTABLE" ]; then
+  echo "Error: Info.plist CFBundleExecutable ('$PLIST_EXECUTABLE') does not match actual executable ('$ACTUAL_EXECUTABLE')" >&2
+  exit 1
+fi
+
 # Compile asset catalog (requires actool)
 ACTOOL=$(xcrun -f actool)
 if [ -d "${ASSETS}" ]; then
